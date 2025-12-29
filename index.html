@@ -19,390 +19,223 @@
       box-sizing: border-box;
     }
     
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-30px) rotate(5deg); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.6; }
-    }
-    
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .animate-float {
-      animation: float 6s ease-in-out infinite;
-    }
-    
-    .animate-pulse-custom {
-      animation: pulse 3s ease-in-out infinite;
-    }
-    
-    .slide-in-up {
-      animation: slideInUp 0.8s ease-out;
-    }
-    
-    .glass-effect {
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .stars-bg {
-      background-image: 
-        radial-gradient(2px 2px at 20% 30%, white, transparent),
-        radial-gradient(2px 2px at 60% 70%, white, transparent),
-        radial-gradient(1px 1px at 50% 50%, white, transparent),
-        radial-gradient(1px 1px at 80% 10%, white, transparent),
-        radial-gradient(2px 2px at 90% 60%, white, transparent),
-        radial-gradient(1px 1px at 33% 80%, white, transparent),
-        radial-gradient(1px 1px at 15% 90%, white, transparent);
-      background-size: 
-        200% 200%,
-        180% 180%,
-        220% 220%,
-        190% 190%,
-        210% 210%,
-        195% 195%,
-        205% 205%;
-      background-position: 0 0, 40% 60%, 80% 20%, 20% 80%, 60% 30%, 90% 70%, 10% 40%;
-      animation: twinkle 60s linear infinite;
-    }
-    
-    @keyframes twinkle {
-      0% { background-position: 0 0, 40% 60%, 80% 20%, 20% 80%, 60% 30%, 90% 70%, 10% 40%; }
-      100% { background-position: 100% 100%, 140% 160%, 180% 120%, 120% 180%, 160% 130%, 190% 170%, 110% 140%; }
-    }
-    
-    .glow-text {
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3);
-    }
-    
-    .hover-lift {
-      transition: all 0.3s ease;
-    }
-    
-    .hover-lift:hover {
-      transform: translateY(-8px);
-    }
-    
-    .nav-link {
-      position: relative;
-      transition: all 0.3s ease;
-    }
-    
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: white;
-      transition: width 0.3s ease;
-    }
-    
-    .nav-link:hover::after {
-      width: 100%;
-    }
-    
-    .challenge-card {
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .challenge-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .challenge-card:hover::before {
-      left: 100%;
-    }
-    
-    .challenge-card:hover {
-      transform: translateY(-10px);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-  </style>
- </head>
- <body class="h-full">
-  <div id="main-wrapper" class="h-full w-full overflow-auto" style="background: #000000;">
-   <!-- Navigation -->
-   <header class="fixed top-0 w-full z-50 glass-effect">
-    <nav class="max-w-7xl mx-auto px-6 py-5">
-     <div class="flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <a href="#" aria-label="StanShare AI" class="flex items-center space-x-3">
-          <svg width="36" height="36" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-            <path d="M100 20 L170 60 L170 140 L100 180 L30 140 L30 60 Z" stroke="url(#logo-gradient)" stroke-width="6" fill="none" />
-            <circle cx="100" cy="60" r="10" fill="white" />
-            <circle cx="70" cy="100" r="10" fill="white" />
-            <circle cx="130" cy="100" r="10" fill="white" />
-            <circle cx="100" cy="140" r="10" fill="white" />
-            <line x1="100" y1="60" x2="70" y2="100" stroke="white" stroke-width="3" />
-            <line x1="100" y1="60" x2="130" y2="100" stroke="white" stroke-width="3" />
-            <line x1="70" y1="100" x2="100" y2="140" stroke="white" stroke-width="3" />
-            <line x1="130" y1="100" x2="100" y2="140" stroke="white" stroke-width="3" />
-            <line x1="70" y1="100" x2="130" y2="100" stroke="white" stroke-width="3" />
-            <circle cx="100" cy="100" r="6" fill="#000000" stroke="white" stroke-width="2" />
-          </svg>
-          <span class="font-semibold" style="font-size: 20px; color: #ffffff; letter-spacing: 0.5px;">StanShareAI</span>
-        </a>
-      </div>
-      <div class="flex space-x-8">
-        <a href="#about" class="nav-link" style="color: #ffffff; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">About</a>
-        <a href="#challenges" class="nav-link" style="color: #ffffff; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Solutions</a>
-        <a href="#team" class="nav-link" style="color: #ffffff; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Team</a>
-        <a href="#contact" class="nav-link" style="color: #ffffff; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Contact</a>
-      </div>
-     </div>
-    </nav>
-   </header>
+    <!doctype html>
+    <html lang="en" class="h-full scroll-smooth">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>StanShareAI - Transforming Tomorrow with AI</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #000000; color: #ffffff; }
+        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 20% 30%, rgba(30,30,80,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 70%, rgba(50,20,80,0.1) 0%, transparent 50%), radial-gradient(2px 2px at 20% 30%, white, transparent), radial-gradient(2px 2px at 60% 70%, white, transparent), radial-gradient(1px 1px at 50% 50%, white, transparent); background-size: 100% 100%, 100% 100%, 200% 200%, 180% 180%, 220% 220%; animation: stars 120s linear infinite; z-index: -1; }
+        @keyframes stars { from { background-position: 0 0, 0 0, 0 0, 40% 60%, 80% 20%; } to { background-position: 0 0, 0 0, 100% 100%, 140% 160%, 180% 120%; } }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); transition: all .25s ease; }
+        .glow { text-shadow: 0 0 30px rgba(255,255,255,0.4); }
+        .gradient-text { background: linear-gradient(90deg, #fff, #bdbdbd, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        .btn-primary { position: relative; overflow: hidden; transition: all .3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.08); }
+        .grid-overlay::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; }
+        .float-slow { animation: float 8s ease-in-out infinite; }
+        .float-medium { animation: float 6s ease-in-out infinite; }
+        .float-fast { animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-20px) } }
+        .data-flow { position: absolute; width: 2px; height: 120px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.4), transparent); animation: flow 3s ease-in-out infinite; }
+        @keyframes flow { 0%,100%{ transform: translateY(-100%); opacity: 0 } 50%{ opacity: 1 } }
+        .nav-link { position: relative; transition: all 0.25s ease; }
+        .nav-link::after{ content:''; position:absolute; left:50%; transform:translateX(-50%); bottom:-4px; width:0; height:2px; background: linear-gradient(90deg, transparent, #fff, transparent); transition: width 0.25s ease; }
+        .nav-link:hover::after{ width:100%; }
+        @media (max-width: 768px) { .text-7xl{ font-size: 48px; } }
+      </style>
+    </head>
+    <body class="h-full">
+      <div class="space-bg"></div>
+      <div class="data-flow" style="left:10%; animation-delay:0s"></div>
+      <div class="data-flow" style="left:30%; animation-delay:1s"></div>
+      <div class="data-flow" style="left:50%; animation-delay:2s"></div>
+      <div class="data-flow" style="left:70%; animation-delay:0.5s"></div>
+      <div class="data-flow" style="left:90%; animation-delay:1.5s"></div>
 
-   <!-- Hero Section -->
-   <section class="relative pt-48 pb-32 px-6 stars-bg" style="background-color: #000000; min-height: 100%;">
-    <div class="max-w-7xl mx-auto">
-     <div class="text-center slide-in-up">
-      <h1 class="font-bold mb-6 glow-text" style="font-size: 72px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; color: #ffffff;">Mastering Financial Data Intelligence</h1>
-      <p class="mb-12" style="font-size: 22px; color: #b8b8b8; font-weight: 300; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; letter-spacing: 0.3px;">AI-powered solutions for data quality, governance, and observability across financial services</p>
-      <button class="px-12 py-4 rounded-sm font-semibold transition-all transform hover:scale-105" style="background: #ffffff; color: #000000; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; border: none;">Start Your Journey</button>
-     </div>
-     <div class="flex justify-center items-center mt-24 space-x-16">
-      <div class="animate-float" style="animation-delay: 0s;">
-       <svg class="w-16 h-16 animate-pulse-custom" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <circle cx="32" cy="32" r="28" stroke="white" stroke-width="1" opacity="0.3" />
-         <circle cx="32" cy="32" r="20" stroke="white" stroke-width="2" opacity="0.5" />
-         <circle cx="32" cy="32" r="8" fill="white" />
-       </svg>
-      </div>
-      <div class="animate-float" style="animation-delay: 2s;">
-       <svg class="w-20 h-20 animate-pulse-custom" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <rect x="12" y="12" width="40" height="40" rx="2" stroke="white" stroke-width="1" opacity="0.3" />
-         <rect x="20" y="20" width="24" height="24" rx="2" stroke="white" stroke-width="2" opacity="0.5" />
-         <circle cx="32" cy="32" r="4" fill="white" />
-       </svg>
-      </div>
-      <div class="animate-float" style="animation-delay: 4s;">
-       <svg class="w-14 h-14 animate-pulse-custom" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <polygon points="32,8 56,24 56,40 32,56 8,40 8,24" stroke="white" stroke-width="1" opacity="0.3" />
-         <polygon points="32,16 48,26 48,38 32,48 16,38 16,26" stroke="white" stroke-width="2" opacity="0.5" />
-         <circle cx="32" cy="32" r="6" fill="white" />
-       </svg>
-      </div>
-     </div>
-    </div>
-   </section>
+      <div class="content-wrapper">
+        <header class="fixed top-0 w-full z-50 glass">
+          <nav class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+              <a href="#" class="flex items-center space-x-3" aria-label="StanShareAI">
+                <svg width="40" height="40" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="float-slow">
+                  <defs>
+                    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#bdbdbd"/></linearGradient>
+                  </defs>
+                  <path d="M100 20 L170 60 L170 140 L100 180 L30 140 L30 60 Z" stroke="url(#logo-gradient)" stroke-width="4" fill="none"/>
+                  <circle cx="100" cy="60" r="6" fill="white"/>
+                  <circle cx="70" cy="100" r="6" fill="white"/>
+                  <circle cx="130" cy="100" r="6" fill="white"/>
+                  <circle cx="100" cy="140" r="6" fill="white"/>
+                </svg>
+                <span class="text-xl font-bold tracking-wide">StanShareAI</span>
+              </a>
+            </div>
 
-   <!-- About Section -->
-   <section id="about" class="py-32 px-6" style="background: #000000;">
-    <div class="max-w-6xl mx-auto">
-     <div class="text-center mb-20">
-      <h2 class="font-bold mb-8 glow-text" style="font-size: 48px; color: #ffffff; font-weight: 600; letter-spacing: -0.5px;">About StanShareAI</h2>
-      <p class="max-w-4xl mx-auto" style="font-size: 18px; color: #b8b8b8; line-height: 1.8; font-weight: 300;">Step into the future with StanShare AI. Our advanced technology solutions push the boundaries of innovation, enabling organizations to harness data with greater intelligence and control. StanShare AI delivers specialized AI and Machine Learning solutions for the financial services and data ecosystem. We help firms unlock value through data mining, intelligent data cleansing, and robust data quality governance across Funds, Equity, Fixed Income, Market, and Reference Data. Our platform brings these capabilities together with end-to-end data observability, ensuring accuracy, reliability, and confidence across the entire data journey.</p>
-     </div>
-     <div class="grid md:grid-cols-3 gap-12 mt-20">
-      <div class="text-center p-8 glass-effect rounded-sm hover-lift">
-       <div class="mb-6 flex justify-center">
-        <div style="width: 60px; height: 60px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <rect x="16" y="16" width="32" height="32" stroke="white" stroke-width="2" fill="none" />
-           <line x1="16" y1="28" x2="48" y2="28" stroke="white" stroke-width="2" />
-           <line x1="16" y1="36" x2="48" y2="36" stroke="white" stroke-width="2" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 18px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">Financial Expertise</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Specialized solutions for Funds, Equity, Fixed Income, and Reference Data</p>
-      </div>
-      <div class="text-center p-8 glass-effect rounded-sm hover-lift">
-       <div class="mb-6 flex justify-center">
-        <div style="width: 60px; height: 60px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <circle cx="32" cy="32" r="16" stroke="white" stroke-width="2" fill="none" />
-           <circle cx="32" cy="32" r="3" fill="white" />
-           <line x1="32" y1="12" x2="32" y2="20" stroke="white" stroke-width="2" />
-           <line x1="32" y1="44" x2="32" y2="52" stroke="white" stroke-width="2" />
-           <line x1="12" y1="32" x2="20" y2="32" stroke="white" stroke-width="2" />
-           <line x1="44" y1="32" x2="52" y2="32" stroke="white" stroke-width="2" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 18px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">End-to-End Observability</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Complete visibility across your entire data journey with confidence</p>
-      </div>
-      <div class="text-center p-8 glass-effect rounded-sm hover-lift">
-       <div class="mb-6 flex justify-center">
-        <div style="width: 60px; height: 60px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <path d="M24 32 L28 36 L40 24" stroke="white" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" />
-           <circle cx="32" cy="32" r="18" stroke="white" stroke-width="2" fill="none" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 18px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">Data Quality Governance</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Ensuring accuracy, reliability, and compliance at every step</p>
-      </div>
-     </div>
-    </div>
-   </section>
+            <div class="flex space-x-8">
+              <a href="#about" class="nav-link text-sm font-medium uppercase tracking-wider">About</a>
+              <a href="#solutions" class="nav-link text-sm font-medium uppercase tracking-wider">Solutions</a>
+              <a href="#team" class="nav-link text-sm font-medium uppercase tracking-wider">Team</a>
+              <a href="#contact" class="nav-link text-sm font-medium uppercase tracking-wider">Contact</a>
+            </div>
+          </nav>
+        </header>
 
-   <!-- Challenges/Solutions Section -->
-   <section id="challenges" class="py-32 px-6" style="background: #000000;">
-    <div class="max-w-6xl mx-auto">
-     <div class="text-center mb-20">
-      <h2 class="font-bold mb-8 glow-text" style="font-size: 48px; color: #ffffff; font-weight: 600; letter-spacing: -0.5px;">Our Solutions</h2>
-      <p class="max-w-3xl mx-auto" style="font-size: 18px; color: #b8b8b8; line-height: 1.8; font-weight: 300;">Addressing critical challenges in financial data management with AI-powered innovation</p>
-     </div>
-     <div class="grid md:grid-cols-2 gap-8">
-      <div class="challenge-card p-8 glass-effect rounded-sm" style="border: 1px solid rgba(255, 255, 255, 0.1);">
-       <div class="mb-4">
-        <div style="width: 50px; height: 50px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <path d="M16 48 L32 32 L48 40 L56 24" stroke="white" stroke-width="3" stroke-linecap="square" />
-           <circle cx="16" cy="48" r="3" fill="white" />
-           <circle cx="32" cy="32" r="3" fill="white" />
-           <circle cx="48" cy="40" r="3" fill="white" />
-           <circle cx="56" cy="24" r="3" fill="white" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 20px; color: #ffffff; letter-spacing: 0.5px;">Data Quality & Governance</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Ensure data accuracy and compliance with intelligent validation, cleansing, and governance frameworks tailored for financial services</p>
-      </div>
-      <div class="challenge-card p-8 glass-effect rounded-sm" style="border: 1px solid rgba(255, 255, 255, 0.1);">
-       <div class="mb-4">
-        <div style="width: 50px; height: 50px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <circle cx="32" cy="32" r="20" stroke="white" stroke-width="2" fill="none" />
-           <circle cx="32" cy="32" r="3" fill="white" />
-           <line x1="32" y1="32" x2="32" y2="16" stroke="white" stroke-width="2" />
-           <line x1="32" y1="32" x2="45" y2="25" stroke="white" stroke-width="2" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 20px; color: #ffffff; letter-spacing: 0.5px;">End-to-End Observability</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Real-time monitoring and insights across your entire data pipeline from ingestion to consumption</p>
-      </div>
-      <div class="challenge-card p-8 glass-effect rounded-sm" style="border: 1px solid rgba(255, 255, 255, 0.1);">
-       <div class="mb-4">
-        <div style="width: 50px; height: 50px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <rect x="16" y="20" width="14" height="28" stroke="white" stroke-width="2" fill="none" />
-           <rect x="34" y="12" width="14" height="36" stroke="white" stroke-width="2" fill="none" />
-           <line x1="12" y1="52" x2="52" y2="52" stroke="white" stroke-width="2" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 20px; color: #ffffff; letter-spacing: 0.5px;">Data Mining & Intelligence</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Extract valuable insights from complex financial datasets with advanced AI and machine learning algorithms</p>
-      </div>
-      <div class="challenge-card p-8 glass-effect rounded-sm" style="border: 1px solid rgba(255, 255, 255, 0.1);">
-       <div class="mb-4">
-        <div style="width: 50px; height: 50px; border: 2px solid white; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
-         <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-           <path d="M32 16 L48 28 L48 44 L32 56 L16 44 L16 28 Z" stroke="white" stroke-width="2" fill="none" />
-           <circle cx="32" cy="32" r="6" stroke="white" stroke-width="2" fill="none" />
-           <line x1="32" y1="16" x2="32" y2="26" stroke="white" stroke-width="2" />
-         </svg>
-        </div>
-       </div>
-       <h3 class="font-semibold mb-3" style="font-size: 20px; color: #ffffff; letter-spacing: 0.5px;">Multi-Asset Class Coverage</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">Comprehensive support across Funds, Equity, Fixed Income, Market Data, and Reference Data ecosystems</p>
-      </div>
-     </div>
-    </div>
-   </section>
+        <main>
+          <section class="relative min-h-screen flex items-center justify-center px-6 grid-overlay">
+            <div class="max-w-6xl mx-auto text-center" style="z-index:2;">
+              <h1 class="text-7xl md:text-8xl font-bold mb-6 gradient-text leading-tight">Mastering Financial<br/>Data Intelligence</h1>
+              <p class="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto font-light">AI-powered solutions for data quality, governance, and observability across financial services</p>
+              <button class="btn-primary px-12 py-4 bg-white text-black font-semibold uppercase tracking-wider text-sm rounded-sm">Start Your Journey</button>
+            </div>
+          </section>
 
-   <!-- Team Section -->
-   <section id="team" class="py-32 px-6" style="background: #000000;">
-    <div class="max-w-6xl mx-auto">
-     <div class="text-center mb-20">
-      <h2 class="font-bold mb-8 glow-text" style="font-size: 48px; color: #ffffff; font-weight: 600; letter-spacing: -0.5px;">Our Team</h2>
-      <p class="max-w-3xl mx-auto" style="font-size: 18px; color: #b8b8b8; line-height: 1.8; font-weight: 300;">Meet the visionaries behind StanShareAI, driving innovation in financial data intelligence</p>
-     </div>
-     <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-      <div class="text-center p-8 glass-effect rounded-sm hover-lift">
-       <div class="mb-6 flex justify-center">
-        <div style="width: 120px; height: 120px; border: 2px solid white; border-radius: 50%; background: rgba(255, 255, 255, 0.05);"></div>
-       </div>
-       <h3 class="font-semibold mb-2" style="font-size: 24px; color: #ffffff; letter-spacing: 0.5px;">Stanislaus Ghoshal</h3>
-       <p class="mb-4" style="font-size: 14px; color: #b8b8b8; text-transform: uppercase; letter-spacing: 1px;">Co-Founder</p>
-       <div class="flex justify-center space-x-4 mt-6">
-        <a href="https://www.linkedin.com/in/stanislaus-ghoshal/" target="_blank" class="p-2 glass-effect rounded-sm hover-lift" style="display: inline-block;">
-         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-           <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-         </svg>
-        </a>
-       </div>
-      </div>
-      <div class="text-center p-8 glass-effect rounded-sm hover-lift">
-       <div class="mb-6 flex justify-center">
-        <div style="width: 120px; height: 120px; border: 2px solid white; border-radius: 50%; background: rgba(255, 255, 255, 0.05);"></div>
-       </div>
-       <h3 class="font-semibold mb-2" style="font-size: 24px; color: #ffffff; letter-spacing: 0.5px;">Abhijit Ghosh</h3>
-       <p class="mb-4" style="font-size: 14px; color: #b8b8b8; text-transform: uppercase; letter-spacing: 1px;">Co-Founder</p>
-       <div class="flex justify-center space-x-4 mt-6">
-        <a href="https://www.linkedin.com/in/abhijit-ghosh-/" target="_blank" class="p-2 glass-effect rounded-sm hover-lift" style="display: inline-block;">
-         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-           <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-         </svg>
-        </a>
-       </div>
-      </div>
-     </div>
-    </div>
-   </section>
+          <section id="about" class="py-28 px-6">
+            <div class="max-w-6xl mx-auto text-center mb-12">
+              <h2 class="text-4xl md:text-5xl font-bold mb-4 glow">About StanShareAI</h2>
+              <p class="text-lg text-gray-400 max-w-4xl mx-auto leading-relaxed font-light">Step into the future with StanShare AI. Our advanced technology solutions push the boundaries of innovation, enabling organizations to harness data with greater intelligence and control. StanShare AI delivers specialized AI and Machine Learning solutions for the financial services and data ecosystem. We help firms unlock value through data mining, intelligent data cleansing, and robust data quality governance across Funds, Equity, Fixed Income, Market, and Reference Data. Our platform brings these capabilities together with end-to-end data observability, ensuring accuracy, reliability, and confidence across the entire data journey.</p>
+            </div>
 
-   <!-- Contact Section -->
-   <section id="contact" class="py-32 px-6" style="background: #000000;">
-    <div class="max-w-6xl mx-auto">
-     <div class="text-center mb-16">
-      <h2 class="font-bold mb-4 glow-text" style="font-size: 48px; color: #ffffff; font-weight: 600; letter-spacing: -0.5px;">Get In Touch</h2>
-      <p style="font-size: 18px; color: #b8b8b8; font-weight: 300;">Let's discuss how we can transform your financial data ecosystem</p>
-     </div>
-     
-     <!-- Contact Information Grid -->
-     <div class="grid md:grid-cols-3 gap-8 mb-16">
-      <div class="text-center p-6 glass-effect rounded-sm">
-       <div class="mb-4 flex justify-center">
-        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-        </svg>
-       </div>
-       <h3 class="font-semibold mb-2" style="font-size: 14px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">Office Address</h3>
-       <p style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300;">RED NEURONAL ARTIFICAL TECHNOLOGY LLP<br>London, United Kingdom</p>
-       <a href="https://maps.google.com/?q=London+United+Kingdom" target="_blank" class="inline-block mt-3 px-4 py-2 glass-effect rounded-sm text-white hover-lift" style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; text-decoration: none;">View on Map</a>
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="glass p-8 rounded-sm">
+                <h3 class="text-lg font-semibold mb-2 uppercase tracking-wide">Financial Expertise</h3>
+                <p class="text-gray-400 text-sm">Specialized solutions for Funds, Equity, Fixed Income, and Reference Data.</p>
+              </div>
+              <div class="glass p-8 rounded-sm">
+                <h3 class="text-lg font-semibold mb-2 uppercase tracking-wide">End-to-End Observability</h3>
+                <p class="text-gray-400 text-sm">Complete visibility across your entire data journey with confidence.</p>
+              </div>
+              <div class="glass p-8 rounded-sm">
+                <h3 class="text-lg font-semibold mb-2 uppercase tracking-wide">Data Quality Governance</h3>
+                <p class="text-gray-400 text-sm">Ensuring accuracy, reliability, and compliance at every step.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="solutions" class="py-28 px-6 bg-transparent">
+            <div class="max-w-6xl mx-auto mb-12 text-center">
+              <h2 class="text-3xl md:text-4xl font-bold mb-4">Solutions & Use Cases</h2>
+              <p class="text-gray-400 max-w-3xl mx-auto">Our products are designed for practical deployment across real financial datasets, delivering measurable ROI and operational clarity.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="glass p-8 rounded-sm">
+                <h4 class="font-semibold mb-2">Data Observability</h4>
+                <p class="text-gray-400 text-sm">Track and alert on data quality through pipelines and integrations to avoid production incidents.</p>
+              </div>
+              <div class="glass p-8 rounded-sm">
+                <h4 class="font-semibold mb-2">Automated Data Cleansing</h4>
+                <p class="text-gray-400 text-sm">ML-driven normalization and standardization across inconsistent sources.</p>
+              </div>
+              <div class="glass p-8 rounded-sm">
+                <h4 class="font-semibold mb-2">Fraud & Risk Detection</h4>
+                <p class="text-gray-400 text-sm">Detect anomalies in market and transaction data with explainable AI models.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="team" class="py-28 px-6">
+            <div class="max-w-6xl mx-auto text-center mb-12">
+              <h2 class="text-3xl md:text-4xl font-bold mb-4">Team</h2>
+              <p class="text-gray-400 max-w-3xl mx-auto">A nimble team with deep experience in finance, data, and machine learning.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="glass p-8 rounded-sm text-center">
+                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4" style="opacity:0.06"></div>
+                <h5 class="font-semibold">Abhijit Ghosh</h5>
+                <p class="text-gray-400 text-sm">Founder & CEO — Strategy, architecture, and product vision.</p>
+              </div>
+              <div class="glass p-8 rounded-sm text-center">
+                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4" style="opacity:0.06"></div>
+                <h5 class="font-semibold">Jane Doe</h5>
+                <p class="text-gray-400 text-sm">Head of Engineering — ML & Data Systems.</p>
+              </div>
+              <div class="glass p-8 rounded-sm text-center">
+                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4" style="opacity:0.06"></div>
+                <h5 class="font-semibold">John Smith</h5>
+                <p class="text-gray-400 text-sm">Data Scientist — Models and analytics.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="contact" class="py-28 px-6">
+            <div class="max-w-3xl mx-auto text-center mb-6">
+              <h2 class="text-3xl md:text-4xl font-bold mb-2">Contact</h2>
+              <p class="text-gray-400 mb-6">Let's discuss how we can transform your financial data ecosystem.</p>
+            </div>
+
+            <div class="max-w-xl mx-auto">
+              <form id="contact-form" class="glass p-8 rounded-sm">
+                <label class="block text-left text-xs uppercase tracking-wider mb-2">Your Email</label>
+                <input id="email" type="email" required class="w-full px-4 py-3 rounded-sm mb-4 bg-transparent border border-white border-opacity-10 text-white" placeholder="you@company.com" />
+                <label class="block text-left text-xs uppercase tracking-wider mb-2">Message</label>
+                <textarea id="message" required rows="5" class="w-full px-4 py-3 rounded-sm mb-4 bg-transparent border border-white border-opacity-10 text-white" placeholder="Tell us about your data challenges..."></textarea>
+                <button type="submit" class="w-full py-3 btn-primary bg-white text-black font-semibold uppercase rounded-sm">Send Message</button>
+                <div id="form-message" class="mt-4 text-sm text-center" style="display:none;"></div>
+              </form>
+            </div>
+
+            <div class="max-w-6xl mx-auto mt-8 text-center">
+              <p class="text-gray-400 text-sm">Email: <a href="mailto:founders@stanshare.com" class="underline">founders@stanshare.com</a> &nbsp;•&nbsp; Phone: +1 (555) 123-4567</p>
+              <p class="text-gray-400 text-sm mt-2">Office: <a href="https://earth.google.com/web/search/20.5937%C2%B0N,78.9629%C2%B0E" target="_blank" rel="noopener noreferrer" class="underline">Google Earth Link</a> — India HQ</p>
+            </div>
+          </section>
+        </main>
+
+        <footer class="py-10 px-6 mt-12 border-t border-white border-opacity-10">
+          <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <p class="text-sm text-gray-400">© 2024 StanShare - a brand of RED NEURONAL ARTIFICAL TECHNOLOGY LLP. Transforming the future with AI.</p>
+            <div class="flex space-x-4">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="mailto:founders@stanshare.com">Contact</a>
+            </div>
+          </div>
+        </footer>
       </div>
-      
-      <div class="text-center p-6 glass-effect rounded-sm">
-       <div class="mb-4 flex justify-center">
-        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-        </svg>
+
+      <script>
+        // Contact form: opens default email client
+        document.getElementById('contact-form').addEventListener('submit', function(e){
+          e.preventDefault();
+          const email = document.getElementById('email').value;
+          const msg = document.getElementById('message').value;
+          const subject = encodeURIComponent('Contact from ' + email);
+          const body = encodeURIComponent(msg + '\n\nFrom: ' + email);
+          const link = `mailto:founders@stanshare.com?subject=${subject}&body=${body}`;
+          window.open(link, '_blank');
+          const fm = document.getElementById('form-message');
+          fm.style.display = 'block'; fm.textContent = '✓ Opening your email client...';
+          setTimeout(()=> fm.style.display='none', 5000);
+          this.reset();
+        });
+
+        // Simple scroll reveal for sections
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              entry.target.classList.add('fade-in');
+              entry.target.style.opacity = 1;
+              entry.target.style.transform = 'translateY(0)';
+            }
+          });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('section').forEach(s => {
+          s.style.opacity = 0; s.style.transform = 'translateY(50px)'; observer.observe(s);
+        });
+      </script>
+    </body>
+    </html>
        </div>
        <h3 class="font-semibold mb-2" style="font-size: 14px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">Email</h3>
        <a href="mailto:founders@stanshare.com" style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300; text-decoration: none; transition: color 0.3s;" class="hover:text-white">founders@stanshare.com</a>
