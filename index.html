@@ -273,12 +273,12 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
     
-    /* Glow effect */
+    /* Glow effect (reduced intensity to avoid blinking) */
     .glow {
       text-shadow: 
-        0 0 30px rgba(255, 255, 255, 0.5),
-        0 0 60px rgba(255, 255, 255, 0.3),
-        0 0 100px rgba(255, 255, 255, 0.2);
+        0 0 20px rgba(255, 255, 255, 0.25),
+        0 0 40px rgba(255, 255, 255, 0.15),
+        0 0 60px rgba(255, 255, 255, 0.08);
     }
     
     @keyframes float {
@@ -290,14 +290,14 @@
       }
     }
     
-    /* Gradient text animation */
+    /* Gradient text animation (softened and slowed to prevent blink) */
     .gradient-text {
-      background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 50%, #ffffff 100%);
+      background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.75) 50%, rgba(255,255,255,0.95) 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: shimmer 3s linear infinite;
+      animation: shimmer 8s linear infinite;
     }
     
     @keyframes shimmer {
@@ -377,7 +377,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      z-index: -1;
+      z-index: -2;
       pointer-events: none;
       display: block;
     }
@@ -980,7 +980,8 @@
         const speed = randomRange(CONFIG.baseSpeed * 0.75, CONFIG.baseSpeed * 1.25);
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
-        const length = randomRange(40, 140);
+        // Make trails slightly longer for a more dramatic streak
+        const length = randomRange(120, 260);
         const life = (Math.max(w,h) + length) / speed;
         particles.push({ x, y, vx, vy, length, life, age: 0, alpha: randomRange(0.6, 1) });
       }
@@ -999,8 +1000,10 @@
           const py = p.y;
           const nx = px + p.vx * dt;
           const ny = py + p.vy * dt;
-          const tailX = px - (p.vx * 0.02);
-          const tailY = py - (p.vy * 0.02);
+          // compute tail using normalized velocity scaled by particle length for consistent streaks
+          const speedMag = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 1;
+          const tailX = px - (p.vx / speedMag) * p.length;
+          const tailY = py - (p.vy / speedMag) * p.length;
 
           // draw streak (line) and a bright head
           const grad = ctx.createLinearGradient(tailX, tailY, nx, ny);
@@ -1009,7 +1012,7 @@
           grad.addColorStop(1, `rgba(255,255,255,${p.alpha.toFixed(2)})`);
 
           ctx.strokeStyle = grad;
-          ctx.lineWidth = Math.max(1, p.length / 80);
+          ctx.lineWidth = Math.max(1, p.length / 50);
           ctx.beginPath();
           ctx.moveTo(tailX, tailY);
           ctx.lineTo(nx, ny);
