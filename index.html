@@ -879,6 +879,30 @@
   </div>
 
   <script>
+    // Particle toggle UI
+    (function particleToggleUI(){
+      const toggle = document.getElementById('particles-toggle');
+      const state = document.getElementById('particles-state');
+      // initial state from localStorage (default on)
+      const stored = localStorage.getItem('particlesEnabled');
+      const enabled = stored === null ? true : stored === 'true';
+      // update UI
+      function applyState(enabled) {
+        state.textContent = enabled ? 'On' : 'Off';
+        toggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        if (window.starTrailsController) {
+          if (enabled) window.starTrailsController.start(); else window.starTrailsController.stop();
+        }
+      }
+      toggle.addEventListener('click', (e) => {
+        const curr = toggle.getAttribute('aria-pressed') === 'true';
+        const next = !curr;
+        localStorage.setItem('particlesEnabled', String(next));
+        applyState(next);
+      });
+      // apply initial
+      applyState(enabled);
+    })();
     // Form submission
     document.getElementById('contact-form').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -1033,7 +1057,11 @@
       }
 
       let last = performance.now();
+      let rafId = null;
+      let enabled = true; // whether the particle system should run
+
       function loop(now){
+        if (!enabled) return; // no-op when disabled
         const dt = Math.min(0.05, (now - last) / 1000); // seconds
         last = now;
 
@@ -1047,7 +1075,26 @@
         }
 
         step(dt);
-        requestAnimationFrame(loop);
+        rafId = requestAnimationFrame(loop);
+      }
+
+      function start() {
+        if (enabled) return;
+        enabled = true;
+        canvas.style.display = 'block';
+        // clear canvas and restart
+        ctx.clearRect(0,0,canvas.clientWidth, canvas.clientHeight);
+        last = performance.now();
+        rafId = requestAnimationFrame(loop);
+      }
+
+      function stop() {
+        enabled = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        // hide canvas and clear
+        canvas.style.display = 'none';
+        ctx.clearRect(0,0,canvas.clientWidth, canvas.clientHeight);
+        particles = [];
       }
 
       function init(){
@@ -1055,17 +1102,30 @@
         last = performance.now();
         // pre-spawn a single particle so the effect appears immediately but subtly
         for (let i=0;i<Math.min(CONFIG.maxParticles(), 1); i++) spawnParticle();
-        requestAnimationFrame(loop);
+        if (enabled) rafId = requestAnimationFrame(loop);
       }
 
       window.addEventListener('resize', () => { DPR = Math.max(1, window.devicePixelRatio || 1); resize(); });
       // ensure we don't cause issues if page is hidden
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) cancelAnimationFrame(loop);
+        if (document.hidden) {
+          if (rafId) cancelAnimationFrame(rafId);
+        } else if (enabled) {
+          last = performance.now();
+          rafId = requestAnimationFrame(loop);
+        }
       });
+
+      // Public controller for enabling/disabling the effect
+      const controller = {
+        start, stop, isEnabled: () => enabled
+      };
 
       // Initialize on next tick so layout sizes are correct
       requestAnimationFrame(init);
+
+      // Expose controller for external toggling
+      window.starTrailsController = controller;
     })();
   </script>
 </body>
@@ -1159,6 +1219,11 @@
      </div>
     </div>
    </footer>
+   
+   <!-- Particle control toggle -->
+   <div style="position: fixed; right: 16px; bottom: 20px; z-index: 60;">
+    <button id="particles-toggle" class="p-2 glass-effect rounded-sm transition" aria-pressed="true" title="Toggle particle trails">Particles: <span id="particles-state">On</span></button>
+   </div>
   </div>
 
   <script>
