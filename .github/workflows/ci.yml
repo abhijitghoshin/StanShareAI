@@ -15,3 +15,9 @@ jobs:
         run: npx prettier --check "**/*.{html,md,css,js,md}"
       - name: Run HTMLHint
         run: npx htmlhint index.html || true
+      - name: Fail if incorrect email address present
+        run: |
+          if grep -R --line-number "funders@stanshare.com" .; then
+            echo "ERROR: found 'funders@stanshare.com' in the repository. Replace with 'founders@stanshare.com'.";
+            exit 1;
+          fi
