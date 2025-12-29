@@ -1,5 +1,0 @@
-name = "stanshareai"
-compatibility_date = "2025-12-29"
-
-[site]
-bucket = "."
