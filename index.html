@@ -970,18 +970,13 @@
       function randomRange(a,b){ return a + Math.random()*(b-a); }
 
       function spawnParticle(){
-        const fromSide = Math.random() < 0.5 ? 'left' : 'top';
-        let x, y, angle;
-        if (fromSide === 'left') {
-          x = -20;
-          y = Math.random() * (canvas.clientHeight * 0.6);
-          angle = randomRange(-0.2, 0.3); // slight up/down
-        } else {
-          x = Math.random() * canvas.clientWidth;
-          y = -20;
-          angle = randomRange(0.15, 0.45);
-        }
-        const speed = randomRange(CONFIG.baseSpeed * 0.6, CONFIG.baseSpeed * 1.6);
+        // Spawn particles from the top edge so they fall downward like meteors
+        const x = Math.random() * canvas.clientWidth;
+        const y = -20;
+        // Angle in radians: downward with a slight diagonal (tilt to the right)
+        const angle = randomRange(0.25, 0.55);
+        // Slight variation in speed
+        const speed = randomRange(CONFIG.baseSpeed * 0.8, CONFIG.baseSpeed * 1.4);
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
         const length = randomRange(40, 140);
