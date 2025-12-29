@@ -953,10 +953,10 @@
       let spawnTimer = 0;
       // Particle settings tuned for a subtle meteor-like trail
       const CONFIG = {
-        // Reduce particle counts for a subtle effect
-        maxParticles: () => (window.innerWidth > 1200 ? 14 : (window.innerWidth > 600 ? 8 : 4)),
-        spawnInterval: 600, // ms (lower frequency)
-        baseSpeed: 100, // px per second (slightly slower)
+        // Make the effect sparse and subtle
+        maxParticles: () => (window.innerWidth > 1200 ? 8 : (window.innerWidth > 600 ? 5 : 2)),
+        spawnInterval: 1200, // ms (much lower frequency)
+        baseSpeed: 90, // px per second (slightly slower)
         trailFade: 0.12 // fade on overlay clearing
       };
 
@@ -974,10 +974,10 @@
         // Spawn particles from the top edge so they fall downward like meteors
         const x = Math.random() * canvas.clientWidth;
         const y = -20;
-        // Angle in radians: downward with a slight diagonal (tilt to the right)
-        const angle = randomRange(0.25, 0.55);
+        // Angle in radians near vertical (pi/2) with slight rightward tilt for diagonal streaks
+        const angle = randomRange(1.30, 1.50);
         // Slight variation in speed
-        const speed = randomRange(CONFIG.baseSpeed * 0.8, CONFIG.baseSpeed * 1.4);
+        const speed = randomRange(CONFIG.baseSpeed * 0.75, CONFIG.baseSpeed * 1.25);
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
         const length = randomRange(40, 140);
@@ -1050,8 +1050,8 @@
       function init(){
         resize();
         last = performance.now();
-        // pre-spawn a couple of particles for immediate but subtle effect
-        for (let i=0;i<Math.min(CONFIG.maxParticles(), 2); i++) spawnParticle();
+        // pre-spawn a single particle so the effect appears immediately but subtly
+        for (let i=0;i<Math.min(CONFIG.maxParticles(), 1); i++) spawnParticle();
         requestAnimationFrame(loop);
       }
 
