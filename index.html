@@ -1,241 +1,741 @@
 <!doctype html>
-<html lang="en" class="h-full">
- <head>
+<html lang="en" class="h-full scroll-smooth">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StanShareAI - Transforming Tomorrow with AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      box-sizing: border-box;
-    }
-    
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
     
-    <!doctype html>
-    <html lang="en" class="h-full scroll-smooth">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>StanShareAI - Transforming Tomorrow with AI</title>
-      <script src="https://cdn.tailwindcss.com"></script>
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #000000; color: #ffffff; }
-        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 20% 30%, rgba(30,30,80,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 70%, rgba(50,20,80,0.1) 0%, transparent 50%), radial-gradient(2px 2px at 20% 30%, white, transparent), radial-gradient(2px 2px at 60% 70%, white, transparent), radial-gradient(1px 1px at 50% 50%, white, transparent); background-size: 100% 100%, 100% 100%, 200% 200%, 180% 180%, 220% 220%; animation: stars 120s linear infinite; z-index: -1; }
-        @keyframes stars { from { background-position: 0 0, 0 0, 0 0, 40% 60%, 80% 20%; } to { background-position: 0 0, 0 0, 100% 100%, 140% 160%, 180% 120%; } }
-        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); transition: all .25s ease; }
-        .glow { text-shadow: 0 0 30px rgba(255,255,255,0.4); }
-        .gradient-text { background: linear-gradient(90deg, #fff, #bdbdbd, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
-        @keyframes shimmer { to { background-position: 200% center; } }
-        .btn-primary { position: relative; overflow: hidden; transition: all .3s ease; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.08); }
-        .grid-overlay::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; }
-        .float-slow { animation: float 8s ease-in-out infinite; }
-        .float-medium { animation: float 6s ease-in-out infinite; }
-        .float-fast { animation: float 4s ease-in-out infinite; }
-        @keyframes float { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-20px) } }
-        .data-flow { position: absolute; width: 2px; height: 120px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.4), transparent); animation: flow 3s ease-in-out infinite; }
-        @keyframes flow { 0%,100%{ transform: translateY(-100%); opacity: 0 } 50%{ opacity: 1 } }
-        .nav-link { position: relative; transition: all 0.25s ease; }
-        .nav-link::after{ content:''; position:absolute; left:50%; transform:translateX(-50%); bottom:-4px; width:0; height:2px; background: linear-gradient(90deg, transparent, #fff, transparent); transition: width 0.25s ease; }
-        .nav-link:hover::after{ width:100%; }
-        @media (max-width: 768px) { .text-7xl{ font-size: 48px; } }
-      </style>
-    </head>
-    <body class="h-full">
-      <div class="space-bg"></div>
-      <div class="data-flow" style="left:10%; animation-delay:0s"></div>
-      <div class="data-flow" style="left:30%; animation-delay:1s"></div>
-      <div class="data-flow" style="left:50%; animation-delay:2s"></div>
-      <div class="data-flow" style="left:70%; animation-delay:0.5s"></div>
-      <div class="data-flow" style="left:90%; animation-delay:1.5s"></div>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #000000;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    
+    /* Starlink-style animated background */
+    .space-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(ellipse at 20% 30%, rgba(30, 30, 80, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(50, 20, 80, 0.1) 0%, transparent 50%),
+        radial-gradient(2px 2px at 20% 30%, white, transparent),
+        radial-gradient(2px 2px at 60% 70%, white, transparent),
+        radial-gradient(1px 1px at 50% 50%, white, transparent),
+        radial-gradient(1px 1px at 80% 10%, white, transparent),
+        radial-gradient(2px 2px at 90% 60%, white, transparent),
+        radial-gradient(1px 1px at 33% 80%, white, transparent),
+        radial-gradient(1px 1px at 15% 90%, white, transparent);
+      background-size: 
+        100% 100%,
+        100% 100%,
+        200% 200%,
+        180% 180%,
+        220% 220%,
+        190% 190%,
+        210% 210%,
+        195% 195%,
+        205% 205%;
+      background-position: 0 0;
+      animation: stars 120s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes stars {
+      from { background-position: 0 0, 0 0, 0 0, 40% 60%, 80% 20%, 20% 80%, 60% 30%, 90% 70%, 10% 40%; }
+      to { background-position: 0 0, 0 0, 100% 100%, 140% 160%, 180% 120%, 120% 180%, 160% 130%, 190% 170%, 110% 140%; }
+    }
+    
+    /* Animation classes */
+    .fade-in {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    
+    .fade-in-left {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    .fade-in-right {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    .scale-in {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    /* Glass effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .glass:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Glow effect */
+    .glow {
+      text-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.5),
+        0 0 60px rgba(255, 255, 255, 0.3),
+        0 0 100px rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes float {
+      0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+      }
+      50% { 
+        transform: translateY(-20px) rotate(3deg); 
+      }
+    }
+    
+    /* Gradient text animation */
+    .gradient-text {
+      background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 50%, #ffffff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+    
+    @keyframes shimmer {
+      to {
+        background-position: 200% center;
+      }
+    }
+    
+    /* Content wrapper */
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Button animations */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.7s ease;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    /* Grid overlay */
+    .grid-overlay {
+      position: relative;
+    }
+    
+    .grid-overlay::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    
+    /* Float animations */
+    .float-slow {
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    .float-medium {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .float-fast {
+      animation: float 4s ease-in-out infinite;
+    }
+    
+    /* Data flow lines */
+    .data-flow {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.5), transparent);
+      animation: flow 3s ease-in-out infinite;
+    }
+    
+    @keyframes flow {
+      0%, 100% { transform: translateY(-100%); opacity: 0; }
+      50% { opacity: 1; }
+    }
+    
+    /* Card hover effects */
+    .glass:hover {
+      transform: translateY(-5px);
+    }
+    
+    /* Navigation link effects */
+    .nav-link {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, white, transparent);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="h-full">
+  <!-- Animated background -->
+  <div class="space-bg"></div>
+  
+  <!-- Data flow lines -->
+  <div class="data-flow" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="data-flow" style="left: 30%; animation-delay: 1s;"></div>
+  <div class="data-flow" style="left: 50%; animation-delay: 2s;"></div>
+  <div class="data-flow" style="left: 70%; animation-delay: 0.5s;"></div>
+  <div class="data-flow" style="left: 90%; animation-delay: 1.5s;"></div>
+  
+  <!-- Content wrapper -->
+  <div class="content-wrapper">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 glass">
+      <nav class="max-w-7xl mx-auto px-6 py-5">
+        <div class="flex justify-between items-center">
+          <!-- Logo -->
+          <div class="flex items-center space-x-3">
+            <a href="#" aria-label="StanShare AI" class="flex items-center space-x-3">
+              <!-- Enhanced hexagonal logo -->
+              <svg width="40" height="40" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="float-slow">
+                <defs>
+                  <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </feMerge>
+                </defs>
+                <!-- Hexagon -->
+                <path d="M100 20 L170 60 L170 140 L100 180 L30 140 L30 60 Z" stroke="url(#logo-gradient)" stroke-width="4" fill="none" filter="url(#glow)" />
+                <!-- Network nodes -->
+                <circle cx="100" cy="60" r="8" fill="white" opacity="0.9">
+                  <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="70" cy="100" r="8" fill="white" opacity="0.9"></circle>
+                <circle cx="130" cy="100" r="8" fill="white" opacity="0.9"></circle>
+                <circle cx="100" cy="140" r="8" fill="white" opacity="0.9"></circle>
+                <!-- Connection lines -->
+                <line x1="100" y1="60" x2="70" y2="100" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="100" y1="60" x2="130" y2="100" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="70" y1="100" x2="100" y2="140" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="130" y1="100" x2="100" y2="140" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="70" y1="100" x2="130" y2="100" stroke="white" stroke-width="2" opacity="0.6" />
+                <!-- Center core -->
+                <circle cx="100" cy="100" r="5" fill="#000000" stroke="white" stroke-width="2" />
+              </svg>
+              <span class="text-xl font-bold tracking-wide">StanShareAI</span>
+            </a>
+          </div>
+          
+          <!-- Navigation -->
+          <div class="flex space-x-10">
+            <a href="#about" class="nav-link text-sm font-medium uppercase tracking-wider">About</a>
+            <a href="#solutions" class="nav-link text-sm font-medium uppercase tracking-wider">Solutions</a>
+            <a href="#team" class="nav-link text-sm font-medium uppercase tracking-wider">Team</a>
+            <a href="#contact" class="nav-link text-sm font-medium uppercase tracking-wider">Contact</a>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-      <div class="content-wrapper">
-        <header class="fixed top-0 w-full z-50 glass">
-          <nav class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-              <a href="#" class="flex items-center space-x-3" aria-label="StanShareAI">
-                <svg width="40" height="40" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="float-slow">
-                  <defs>
-                    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#bdbdbd"/></linearGradient>
-                  </defs>
-                  <path d="M100 20 L170 60 L170 140 L100 180 L30 140 L30 60 Z" stroke="url(#logo-gradient)" stroke-width="4" fill="none"/>
-                  <circle cx="100" cy="60" r="6" fill="white"/>
-                  <circle cx="70" cy="100" r="6" fill="white"/>
-                  <circle cx="130" cy="100" r="6" fill="white"/>
-                  <circle cx="100" cy="140" r="6" fill="white"/>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center px-6 grid-overlay">
+      <div class="max-w-6xl mx-auto text-center fade-in visible">
+        <!-- Floating geometric shapes -->
+        <div class="absolute top-1/4 left-10 float-slow opacity-20">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="white" stroke-width="1" fill="none" />
+          </svg>
+        </div>
+        <div class="absolute top-1/3 right-20 float-medium opacity-20">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <rect x="10" y="10" width="60" height="60" stroke="white" stroke-width="1" fill="none" />
+          </svg>
+        </div>
+        <div class="absolute bottom-1/4 right-10 float-fast opacity-20">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <polygon points="35,5 65,25 65,50 35,65 5,50 5,25" stroke="white" stroke-width="1" fill="none" />
+          </svg>
+        </div>
+        
+        <h1 class="text-7xl md:text-8xl font-bold mb-8 glow gradient-text leading-tight">Mastering Financial<br/>Data Intelligence</h1>
+        <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto font-light leading-relaxed">AI-powered solutions for data quality, governance, and observability across financial services</p>
+        <button class="btn-primary px-12 py-4 bg-white text-black font-semibold uppercase tracking-wider text-sm rounded-sm">Start Your Journey</button>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <path d="M15 5 L15 20 M15 20 L10 15 M15 20 L20 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 px-6">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-20 fade-in visible">
+          <h2 class="text-5xl md:text-6xl font-bold mb-8 glow">About StanShareAI</h2>
+          <p class="text-lg md:text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed font-light">Step into the future with StanShare AI. Our advanced technology solutions push the boundaries of innovation, enabling organizations to harness data with greater intelligence and control. StanShare AI delivers specialized AI and Machine Learning solutions for the financial services and data ecosystem. We help firms unlock value through data mining, intelligent data cleansing, and robust data quality governance across Funds, Equity, Fixed Income, Market, and Reference Data. Our platform brings these capabilities together with end-to-end data observability, ensuring accuracy, reliability, and confidence across the entire data journey.</p>
+        </div>
+        
+        <!-- Features -->
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="glass p-10 rounded-sm fade-in">
+            <div class="w-16 h-16 mb-6 flex items-center justify-center border border-white border-opacity-20 rounded">
+              <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="3" y1="15" x2="21" y2="15" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">Financial Expertise</h3>
+            <p class="text-gray-400 font-light leading-relaxed">Specialized solutions for Funds, Equity, Fixed Income, and Reference Data</p>
+          </div>
+          
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.1s;">
+            <div class="w-16 h-16 mb-6 flex items-center justify-center border border-white border-opacity-20 rounded">
+              <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="2" fill="white" />
+                <line x1="12" y1="2" x2="12" y2="6" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+                <line x1="2" y1="12" x2="6" y2="12" />
+                <line x1="18" y1="12" x2="22" y2="12" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">End-to-End Observability</h3>
+            <p class="text-gray-400 font-light leading-relaxed">Complete visibility across your entire data journey with confidence</p>
+          </div>
+          
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.2s;">
+            <div class="w-16 h-16 mb-6 flex items-center justify-center border border-white border-opacity-20 rounded">
+              <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <path d="M9 12 L11 14 L15 10" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">Data Quality Governance</h3>
+            <p class="text-gray-400 font-light leading-relaxed">Ensuring accuracy, reliability, and compliance at every step</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section id="solutions" class="py-32 px-6">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-5xl md:text-6xl font-bold text-center mb-24 glow fade-in">Challenges We Solve</h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="glass p-10 rounded-sm fade-in">
+            <div class="w-14 h-14 mb-6 flex items-center justify-center border border-white border-opacity-20">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 12 L10 14 L16 8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">Data Quality Issues</h3>
+            <p class="text-sm text-gray-400 font-light leading-relaxed">Intelligent data cleansing and mining to eliminate errors, inconsistencies, and duplicates across your financial data ecosystem</p>
+          </div>
+
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.1s;">
+            <div class="w-14 h-14 mb-6 flex items-center justify-center border border-white border-opacity-20">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <path d="M12 2 L16 6 L16 14 C16 18 14 20 12 22 C10 20 8 18 8 14 L8 6 Z" />
+                <path d="M9 12 L11 14 L15 10" stroke-linecap="round" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">Regulatory Compliance</h3>
+            <p class="text-sm text-gray-400 font-light leading-relaxed">Robust governance frameworks ensuring your data meets stringent regulatory requirements and audit standards</p>
+          </div>
+
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.2s;">
+            <div class="w-14 h-14 mb-6 flex items-center justify-center border border-white border-opacity-20">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <ellipse cx="12" cy="6" rx="8" ry="3" />
+                <path d="M4 6 L4 10" />
+                <path d="M20 6 L20 10" />
+                <ellipse cx="12" cy="10" rx="8" ry="3" />
+                <path d="M4 10 L4 14" />
+                <path d="M20 10 L20 14" />
+                <ellipse cx="12" cy="14" rx="8" ry="3" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">Multi-Asset Data Management</h3>
+            <p class="text-sm text-gray-400 font-light leading-relaxed">Unified platform handling Funds, Equity, Fixed Income, Market, and Reference Data with seamless integration</p>
+          </div>
+
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.3s;">
+            <div class="w-14 h-14 mb-6 flex items-center justify-center border border-white border-opacity-20">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <ellipse cx="12" cy="12" rx="10" ry="6" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="12" cy="12" r="1" fill="white" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">End-to-End Data Observability</h3>
+            <p class="text-sm text-gray-400 font-light leading-relaxed">Complete visibility across data pipelines with real-time monitoring, anomaly detection, and comprehensive lineage tracking</p>
+          </div>
+
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.4s;">
+            <div class="w-14 h-14 mb-6 flex items-center justify-center border border-white border-opacity-20">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <rect x="3" y="10" width="6" height="6" />
+                <rect x="15" y="10" width="6" height="6" />
+                <circle cx="12" cy="13" r="3" />
+                <line x1="9" y1="13" x2="10.5" y2="13" />
+                <line x1="13.5" y1="13" x2="15" y2="13" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">ETL Pipeline Monitoring</h3>
+            <p class="text-sm text-gray-400 font-light leading-relaxed">Real-time monitoring and alerting for data pipelines ensuring smooth Extract, Transform, and Load operations with proactive issue detection</p>
+          </div>
+
+          <div class="glass p-10 rounded-sm fade-in" style="transition-delay: 0.5s;">
+            <div class="w-14 h-14 mb-6 flex items-center justify-center border border-white border-opacity-20">
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="3" y1="15" x2="21" y2="15" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+                <line x1="15" y1="3" x2="15" y2="21" />
+                <path d="M10 12 L12 14 L14 10" stroke-linecap="round" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4 uppercase tracking-wider">Data Quality Framework</h3>
+            <p class="text-sm text-gray-400 font-light leading-relaxed">Design and implementation expertise for comprehensive data quality frameworks with validation rules, quality metrics, and continuous improvement processes</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-32 px-6">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-5xl md:text-6xl font-bold text-center mb-24 glow fade-in">Meet Our Team</h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div class="text-center fade-in">
+            <div class="mb-6 flex justify-center">
+              <div class="w-48 h-48 rounded-sm overflow-hidden border border-white border-opacity-20 bg-gradient-to-br from-blue-900/20 to-purple-900/10 flex items-center justify-center">
+                <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none">
+                  <circle cx="100" cy="100" r="60" stroke="white" stroke-width="2" opacity="0.4" />
+                  <circle cx="100" cy="100" r="45" stroke="white" stroke-width="2" opacity="0.6" />
+                  <circle cx="100" cy="100" r="30" stroke="white" stroke-width="3" opacity="0.8" />
+                  <path d="M70 70 L80 85 L100 75 L120 85 L130 70 L125 95 L75 95 Z" fill="white" opacity="0.9" />
+                  <rect x="75" y="95" width="50" height="8" fill="white" opacity="0.9" />
                 </svg>
-                <span class="text-xl font-bold tracking-wide">StanShareAI</span>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 uppercase tracking-wider">Abhijit Ghosh</h3>
+            <p class="text-sm text-gray-400 font-light">Founder & CEO</p>
+          </div>
+          
+          <div class="text-center fade-in" style="transition-delay: 0.1s;">
+            <div class="mb-6 flex justify-center">
+              <div class="w-48 h-48 rounded-sm overflow-hidden border border-white border-opacity-20 bg-gradient-to-br from-green-900/20 to-teal-900/10 flex items-center justify-center">
+                <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none">...</svg>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 uppercase tracking-wider">Chandan Gupta</h3>
+            <p class="text-sm text-gray-400 font-light">Head of Technology</p>
+          </div>
+
+          <div class="text-center fade-in" style="transition-delay: 0.2s;">
+            <div class="mb-6 flex justify-center">
+              <div class="w-48 h-48 rounded-sm overflow-hidden border border-white border-opacity-20 bg-gradient-to-br from-pink-900/20 to-red-900/10 flex items-center justify-center">
+                <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none">...</svg>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 uppercase tracking-wider">Abantika Ghosh</h3>
+            <p class="text-sm text-gray-400 font-light">Head of Human Culture</p>
+          </div>
+          
+          <div class="text-center fade-in" style="transition-delay: 0.3s;">
+            <div class="mb-6 flex justify-center">
+              <div class="w-48 h-48 rounded-sm overflow-hidden border border-white border-opacity-20 bg-gradient-to-br from-yellow-900/20 to-orange-900/10 flex items-center justify-center">
+                <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none">...</svg>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 uppercase tracking-wider">Sparsh Oberoi</h3>
+            <p class="text-sm text-gray-400 font-light">Head of Marketing</p>
+          </div>
+          
+          <div class="text-center fade-in" style="transition-delay: 0.4s;">
+            <div class="mb-6 flex justify-center">
+              <div class="w-48 h-48 rounded-sm overflow-hidden border border-white border-opacity-20 bg-gradient-to-br from-cyan-900/20 to-blue-900/10 flex items-center justify-center">
+                <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none">...</svg>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 uppercase tracking-wider">Dilip Kumar Ghosh</h3>
+            <p class="text-sm text-gray-400 font-light">Chief Financial Officer</p>
+          </div>
+          
+          <div class="text-center fade-in" style="transition-delay: 0.5s;">
+            <div class="mb-6 flex justify-center">
+              <div class="w-48 h-48 rounded-sm overflow-hidden border border-white border-opacity-20 bg-gradient-to-br from-purple-900/20 to-indigo-900/10 flex items-center justify-center">
+                <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none">...</svg>
+              </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2 uppercase tracking-wider">Abhishikta Ghosh</h3>
+            <p class="text-sm text-gray-400 font-light">Co-founder</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 px-6">
+      <div class="max-w-xl mx-auto">
+        <div class="text-center mb-16 fade-in">
+          <h2 class="text-5xl md:text-6xl font-bold mb-6 glow">Get In Touch</h2>
+          <p class="text-lg text-gray-400 font-light">Let's discuss how we can transform your financial data ecosystem</p>
+        </div>
+        
+        <form id="contact-form" class="glass p-10 rounded-sm fade-in">
+          <div class="mb-6">
+            <label class="block mb-2 text-xs font-medium uppercase tracking-wider">Your Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              required 
+              class="w-full px-4 py-3 bg-white bg-opacity-5 border border-white border-opacity-20 rounded text-white focus:outline-none focus:border-opacity-40 transition"
+              placeholder="you@company.com"
+            />
+          </div>
+          
+          <div class="mb-6">
+            <label class="block mb-2 text-xs font-medium uppercase tracking-wider">Your Message</label>
+            <textarea 
+              id="message" 
+              required 
+              rows="5" 
+              class="w-full px-4 py-3 bg-white bg-opacity-5 border border-white border-opacity-20 rounded text-white focus:outline-none focus:border-opacity-40 transition resize-none"
+              placeholder="Tell us about your data challenges..."
+            ></textarea>
+          </div>
+          
+          <button type="submit" class="btn-primary w-full py-4 bg-white text-black font-semibold uppercase tracking-wider text-sm rounded">
+            Send Message
+          </button>
+          
+          <div id="form-message" class="mt-6 text-center" style="display: none;"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 border-t border-white border-opacity-10">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 mb-16">
+          <div class="fade-in">
+            <div class="flex items-center space-x-3 mb-6">
+              <svg width="32" height="32" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="footer-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <path d="M100 20 L170 60 L170 140 L100 180 L30 140 L30 60 Z" stroke="url(#footer-logo-gradient)" stroke-width="4" fill="none" />
+                <circle cx="100" cy="60" r="8" fill="white" opacity="0.9" />
+                <circle cx="70" cy="100" r="8" fill="white" opacity="0.9" />
+                <circle cx="130" cy="100" r="8" fill="white" opacity="0.9" />
+                <circle cx="100" cy="140" r="8" fill="white" opacity="0.9" />
+                <line x1="100" y1="60" x2="70" y2="100" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="100" y1="60" x2="130" y2="100" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="70" y1="100" x2="100" y2="140" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="130" y1="100" x2="100" y2="140" stroke="white" stroke-width="2" opacity="0.6" />
+                <line x1="70" y1="100" x2="130" y2="100" stroke="white" stroke-width="2" opacity="0.6" />
+                <circle cx="100" cy="100" r="5" fill="#000000" stroke="white" stroke-width="2" />
+              </svg>
+              <h3 class="font-bold uppercase tracking-wider">StanShare AI</h3>
+            </div>
+            <p class="text-sm text-gray-400 mb-4 font-light">A brand of RED NEURONAL ARTIFICAL TECHNOLOGY LLP</p>
+            <p class="text-sm text-gray-400 leading-relaxed font-light mb-4">A-82, Indiabulls Centrum Park,<br/>Sec-103, Dualatabad,<br/>Gurgaon, Haryana, India</p>
+            <a href="https://earth.google.com/web/search/A-82,+Indiabulls+Centrum+Park,+Sec-103,+Dualatabad,+Gurgaon,+Haryana,+India" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors font-light">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                <path d="M2 12 C2 12 5 6 12 6 C19 6 22 12 22 12" stroke="currentColor" stroke-width="1.5" />
+                <path d="M2 12 C2 12 5 18 12 18 C19 18 22 12 22 12" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
+                <line x1="12" y1="2" x2="12" y2="5" stroke="currentColor" stroke-width="1.5" />
+                <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+              <span>View on Google Earth</span>
+            </a>
+          </div>
+          
+          <div class="fade-in" style="transition-delay: 0.1s;">
+            <h3 class="font-bold mb-6 uppercase tracking-wider">Quick Links</h3>
+            <div class="flex flex-wrap gap-8 mb-8">
+              <a href="#about" class="text-sm text-gray-400 hover:text-white transition font-light">About</a>
+              <a href="#solutions" class="text-sm text-gray-400 hover:text-white transition font-light">Solutions</a>
+              <a href="#team" class="text-sm text-gray-400 hover:text-white transition font-light">Team</a>
+              <a href="#contact" class="text-sm text-gray-400 hover:text-white transition font-light">Contact</a>
+            </div>
+            
+            <h3 class="font-bold mb-6 uppercase tracking-wider">Connect</h3>
+            <div class="flex space-x-6">
+              <a href="https://www.linkedin.com/company/30225003/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110" aria-label="LinkedIn">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M20 3H4C3.4 3 3 3.4 3 4V20C3 20.6 3.4 21 4 21H20C20.6 21 21 20.6 21 20V4C21 3.4 20.6 3 20 3ZM8.5 18.3H5.7V10H8.5V18.3ZM7.1 8.7C6.2 8.7 5.5 8 5.5 7.1C5.5 6.2 6.2 5.5 7.1 5.5C8 5.5 8.7 6.2 8.7 7.1C8.7 8 8 8.7 7.1 8.7ZM18.3 18.3H15.5V14.2C15.5 13.2 15.5 11.9 14.1 11.9C12.7 11.9 12.5 13 12.5 14.1V18.3H9.7V10H12.4V11.1H12.4C12.8 10.4 13.7 9.7 15 9.7C17.8 9.7 18.3 11.5 18.3 13.8V18.3Z"/></svg>
+              </a>
+              <a href="https://twitter.com/share_stan" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110" aria-label="Twitter">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M18.3 8.6C18.3 8.8 18.3 9 18.3 9.2C18.3 13.8 14.8 19.1 8.3 19.1C6.4 19.1 4.7 18.5 3.2 17.5C3.5 17.5 3.7 17.5 4 17.5C5.5 17.5 6.9 17 8 16.1C6.5 16.1 5.3 15.1 4.9 13.8C5.1 13.8 5.3 13.9 5.5 13.9C5.8 13.9 6.1 13.8 6.3 13.8C4.8 13.5 3.7 12.2 3.7 10.6V10.6C4.1 10.8 4.6 11 5.1 11C4.2 10.4 3.6 9.3 3.6 8.1C3.6 7.5 3.8 6.9 4.1 6.4C5.7 8.4 8.1 9.7 10.8 9.8C10.7 9.6 10.7 9.4 10.7 9.2C10.7 7.3 12.2 5.8 14.1 5.8C15.1 5.8 16 6.2 16.6 6.9C17.4 6.7 18.1 6.4 18.7 6C18.5 6.8 18 7.5 17.3 7.9C18 7.8 18.7 7.6 19.3 7.3C18.7 8.1 18.5 8.4 18.3 8.6Z"/></svg>
+              </a>
+              <a href="https://www.instagram.com/stanshare/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110" aria-label="Instagram">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </a>
+              <a href="https://www.facebook.com/stanshare/" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110" aria-label="Facebook">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 16.8 5.4 20.9 10 21.8V15H8V12H10V9.8C10 7.8 11.3 6.6 13.1 6.6C14 6.6 14.9 6.8 14.9 6.8V9H13.9C12.9 9 12.6 9.6 12.6 10.3V12H14.8L14.5 15H12.6V21.8C17.2 20.9 22 16.8 22 12Z"/></svg>
+              </a>
+              <a href="https://www.youtube.com/@stanshare8529" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110" aria-label="YouTube">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M23.5 6.5C23.3 5.7 22.7 5.1 21.9 4.9C20.2 4.5 12 4.5 12 4.5C12 4.5 3.8 4.5 2.1 4.9C1.3 5.1 0.7 5.7 0.5 6.5C0.1 8.2 0.1 12 0.1 12C0.1 12 0.1 15.8 0.5 17.5C0.7 18.3 1.3 18.9 2.1 19.1C3.8 19.5 12 19.5 12 19.5C12 19.5 20.2 19.5 21.9 19.1C22.7 18.9 23.3 18.3 23.5 17.5C23.9 15.8 23.9 12 23.9 12C23.9 12 23.9 8.2 23.5 6.5ZM9.6 15.5V8.5L15.8 12L9.6 15.5Z"/></svg>
+              </a>
+              <a href="mailto:funders@stanshare.com" class="transition-transform hover:scale-110" aria-label="Email">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/></svg>
               </a>
             </div>
-
-            <div class="flex space-x-8">
-              <a href="#about" class="nav-link text-sm font-medium uppercase tracking-wider">About</a>
-              <a href="#solutions" class="nav-link text-sm font-medium uppercase tracking-wider">Solutions</a>
-              <a href="#team" class="nav-link text-sm font-medium uppercase tracking-wider">Team</a>
-              <a href="#contact" class="nav-link text-sm font-medium uppercase tracking-wider">Contact</a>
-            </div>
-          </nav>
-        </header>
-
-        <main>
-          <section class="relative min-h-screen flex items-center justify-center px-6 grid-overlay">
-            <div class="max-w-6xl mx-auto text-center" style="z-index:2;">
-              <h1 class="text-7xl md:text-8xl font-bold mb-6 gradient-text leading-tight">Mastering Financial<br/>Data Intelligence</h1>
-              <p class="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto font-light">AI-powered solutions for data quality, governance, and observability across financial services</p>
-              <button class="btn-primary px-12 py-4 bg-white text-black font-semibold uppercase tracking-wider text-sm rounded-sm">Start Your Journey</button>
-            </div>
-          </section>
-
-          <section id="about" class="py-28 px-6">
-            <div class="max-w-6xl mx-auto text-center mb-12">
-              <h2 class="text-4xl md:text-5xl font-bold mb-4 glow">About StanShareAI</h2>
-              <p class="text-lg text-gray-400 max-w-4xl mx-auto leading-relaxed font-light">Step into the future with StanShare AI. Our advanced technology solutions push the boundaries of innovation, enabling organizations to harness data with greater intelligence and control. StanShare AI delivers specialized AI and Machine Learning solutions for the financial services and data ecosystem. We help firms unlock value through data mining, intelligent data cleansing, and robust data quality governance across Funds, Equity, Fixed Income, Market, and Reference Data. Our platform brings these capabilities together with end-to-end data observability, ensuring accuracy, reliability, and confidence across the entire data journey.</p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-              <div class="glass p-8 rounded-sm">
-                <h3 class="text-lg font-semibold mb-2 uppercase tracking-wide">Financial Expertise</h3>
-                <p class="text-gray-400 text-sm">Specialized solutions for Funds, Equity, Fixed Income, and Reference Data.</p>
-              </div>
-              <div class="glass p-8 rounded-sm">
-                <h3 class="text-lg font-semibold mb-2 uppercase tracking-wide">End-to-End Observability</h3>
-                <p class="text-gray-400 text-sm">Complete visibility across your entire data journey with confidence.</p>
-              </div>
-              <div class="glass p-8 rounded-sm">
-                <h3 class="text-lg font-semibold mb-2 uppercase tracking-wide">Data Quality Governance</h3>
-                <p class="text-gray-400 text-sm">Ensuring accuracy, reliability, and compliance at every step.</p>
-              </div>
-            </div>
-          </section>
-
-          <section id="solutions" class="py-28 px-6 bg-transparent">
-            <div class="max-w-6xl mx-auto mb-12 text-center">
-              <h2 class="text-3xl md:text-4xl font-bold mb-4">Solutions & Use Cases</h2>
-              <p class="text-gray-400 max-w-3xl mx-auto">Our products are designed for practical deployment across real financial datasets, delivering measurable ROI and operational clarity.</p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-              <div class="glass p-8 rounded-sm">
-                <h4 class="font-semibold mb-2">Data Observability</h4>
-                <p class="text-gray-400 text-sm">Track and alert on data quality through pipelines and integrations to avoid production incidents.</p>
-              </div>
-              <div class="glass p-8 rounded-sm">
-                <h4 class="font-semibold mb-2">Automated Data Cleansing</h4>
-                <p class="text-gray-400 text-sm">ML-driven normalization and standardization across inconsistent sources.</p>
-              </div>
-              <div class="glass p-8 rounded-sm">
-                <h4 class="font-semibold mb-2">Fraud & Risk Detection</h4>
-                <p class="text-gray-400 text-sm">Detect anomalies in market and transaction data with explainable AI models.</p>
-              </div>
-            </div>
-          </section>
-
-          <section id="team" class="py-28 px-6">
-            <div class="max-w-6xl mx-auto text-center mb-12">
-              <h2 class="text-3xl md:text-4xl font-bold mb-4">Team</h2>
-              <p class="text-gray-400 max-w-3xl mx-auto">A nimble team with deep experience in finance, data, and machine learning.</p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-              <div class="glass p-8 rounded-sm text-center">
-                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4" style="opacity:0.06"></div>
-                <h5 class="font-semibold">Abhijit Ghosh</h5>
-                <p class="text-gray-400 text-sm">Founder & CEO — Strategy, architecture, and product vision.</p>
-              </div>
-              <div class="glass p-8 rounded-sm text-center">
-                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4" style="opacity:0.06"></div>
-                <h5 class="font-semibold">Jane Doe</h5>
-                <p class="text-gray-400 text-sm">Head of Engineering — ML & Data Systems.</p>
-              </div>
-              <div class="glass p-8 rounded-sm text-center">
-                <div class="w-20 h-20 bg-white rounded-full mx-auto mb-4" style="opacity:0.06"></div>
-                <h5 class="font-semibold">John Smith</h5>
-                <p class="text-gray-400 text-sm">Data Scientist — Models and analytics.</p>
-              </div>
-            </div>
-          </section>
-
-          <section id="contact" class="py-28 px-6">
-            <div class="max-w-3xl mx-auto text-center mb-6">
-              <h2 class="text-3xl md:text-4xl font-bold mb-2">Contact</h2>
-              <p class="text-gray-400 mb-6">Let's discuss how we can transform your financial data ecosystem.</p>
-            </div>
-
-            <div class="max-w-xl mx-auto">
-              <form id="contact-form" class="glass p-8 rounded-sm">
-                <label class="block text-left text-xs uppercase tracking-wider mb-2">Your Email</label>
-                <input id="email" type="email" required class="w-full px-4 py-3 rounded-sm mb-4 bg-transparent border border-white border-opacity-10 text-white" placeholder="you@company.com" />
-                <label class="block text-left text-xs uppercase tracking-wider mb-2">Message</label>
-                <textarea id="message" required rows="5" class="w-full px-4 py-3 rounded-sm mb-4 bg-transparent border border-white border-opacity-10 text-white" placeholder="Tell us about your data challenges..."></textarea>
-                <button type="submit" class="w-full py-3 btn-primary bg-white text-black font-semibold uppercase rounded-sm">Send Message</button>
-                <div id="form-message" class="mt-4 text-sm text-center" style="display:none;"></div>
-              </form>
-            </div>
-
-            <div class="max-w-6xl mx-auto mt-8 text-center">
-              <p class="text-gray-400 text-sm">Email: <a href="mailto:founders@stanshare.com" class="underline">founders@stanshare.com</a> &nbsp;•&nbsp; Phone: +1 (555) 123-4567</p>
-              <p class="text-gray-400 text-sm mt-2">Office: <a href="https://earth.google.com/web/search/20.5937%C2%B0N,78.9629%C2%B0E" target="_blank" rel="noopener noreferrer" class="underline">Google Earth Link</a> — India HQ</p>
-            </div>
-          </section>
-        </main>
-
-        <footer class="py-10 px-6 mt-12 border-t border-white border-opacity-10">
-          <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <p class="text-sm text-gray-400">© 2024 StanShare - a brand of RED NEURONAL ARTIFICAL TECHNOLOGY LLP. Transforming the future with AI.</p>
-            <div class="flex space-x-4">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <a href="mailto:founders@stanshare.com">Contact</a>
-            </div>
           </div>
-        </footer>
+        </div>
+        
+        <div class="pt-8 text-center border-t border-white border-opacity-10 fade-in">
+          <p class="text-xs text-gray-400 font-light">© 2024 StanShare - a brand of RED NEURONAL ARTIFICAL TECHNOLOGY LLP. Transforming the future with AI.</p>
+        </div>
       </div>
+    </footer>
+  </div>
 
-      <script>
-        // Contact form: opens default email client
-        document.getElementById('contact-form').addEventListener('submit', function(e){
-          e.preventDefault();
-          const email = document.getElementById('email').value;
-          const msg = document.getElementById('message').value;
-          const subject = encodeURIComponent('Contact from ' + email);
-          const body = encodeURIComponent(msg + '\n\nFrom: ' + email);
-          const link = `mailto:founders@stanshare.com?subject=${subject}&body=${body}`;
-          window.open(link, '_blank');
-          const fm = document.getElementById('form-message');
-          fm.style.display = 'block'; fm.textContent = '✓ Opening your email client...';
-          setTimeout(()=> fm.style.display='none', 5000);
-          this.reset();
-        });
+  <script>
+    // Form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      const subject = encodeURIComponent('New Contact Form Submission from ' + email);
+      const body = encodeURIComponent('From: ' + email + '\n\nMessage:\n' + message);
+      window.open(`mailto:funders@stanshare.com?subject=${subject}&body=${body}`, '_blank');
+      
+      const formMessage = document.getElementById('form-message');
+      formMessage.style.display = 'block';
+      formMessage.textContent = '✓ Opening your email client to send the message';
+      
+      document.getElementById('email').value = '';
+      document.getElementById('message').value = '';
+      
+      setTimeout(() => formMessage.style.display = 'none', 5000);
+    });
 
-        // Simple scroll reveal for sections
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if(entry.isIntersecting){
-              entry.target.classList.add('fade-in');
-              entry.target.style.opacity = 1;
-              entry.target.style.transform = 'translateY(0)';
-            }
-          });
-        }, { threshold: 0.15 });
+    // Scroll reveal animation
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
 
-        document.querySelectorAll('section').forEach(s => {
-          s.style.opacity = 0; s.style.transform = 'translateY(50px)'; observer.observe(s);
-        });
-      </script>
-    </body>
-    </html>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .scale-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Parallax effect on scroll
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const parallaxElements = document.querySelectorAll('.parallax');
+      
+      parallaxElements.forEach(el => {
+        const speed = el.dataset.speed || 0.5;
+        el.style.transform = `translateY(${scrolled * speed}px)`;
+      });
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
        </div>
        <h3 class="font-semibold mb-2" style="font-size: 14px; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">Email</h3>
        <a href="mailto:founders@stanshare.com" style="font-size: 14px; color: #b8b8b8; line-height: 1.7; font-weight: 300; text-decoration: none; transition: color 0.3s;" class="hover:text-white">founders@stanshare.com</a>
