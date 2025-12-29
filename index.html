@@ -371,25 +371,15 @@
       animation: float 4s ease-in-out infinite;
     }
 
-    /* Falling stars */
-    .falling-star {
+    /* Streak/particle canvas will handle meteor-like trails */
+    .star-trail-canvas {
       position: absolute;
-      top: -10px;
-      width: 2px;
-      height: 2px;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.9;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
       pointer-events: none;
-      transform: translateY(0) translateX(0);
-      will-change: transform, opacity;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(110vh) translateX(20px) rotate(20deg);
-        opacity: 0;
-      }
+      display: block;
     }
     
     /* Data flow lines */
@@ -452,6 +442,8 @@
 <body class="h-full">
   <!-- Animated background -->
   <div class="space-bg"></div>
+  <!-- Canvas for streak particle / meteor trail animation -->
+  <canvas class="star-trail-canvas" aria-hidden="true"></canvas>
   
   <!-- Data flow lines -->
   <div class="data-flow" style="left: 10%; animation-delay: 0s;"></div>
@@ -947,23 +939,133 @@
     });
   </script>
   <script>
-    // Create a light falling-stars effect inside .space-bg
-    (function createFallingStars(){
-      const container = document.querySelector('.space-bg');
-      if (!container) return;
-      const STAR_COUNT = 18;
-      for (let i = 0; i < STAR_COUNT; i++) {
-        const star = document.createElement('div');
-        star.className = 'falling-star';
-        const size = Math.random() * 2 + 1; // 1-3px
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.left = `${Math.random() * 100}%`;
-        const duration = Math.random() * 4 + 3; // 3-7s
-        star.style.animation = `fall ${duration}s linear ${Math.random() * 5}s infinite`;
-        star.style.opacity = `${0.5 + Math.random() * 0.5}`;
-        container.appendChild(star);
+    // Streak particle / meteor trail animation using canvas
+    (function starTrails(){
+      const canvas = document.querySelector('.star-trail-canvas');
+      const bg = document.querySelector('.space-bg');
+      // Remove any old DOM-based stars
+      document.querySelectorAll('.falling-star').forEach(n => n.remove());
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      let w = 0, h = 0, DPR = Math.max(1, window.devicePixelRatio || 1);
+      let particles = [];
+      let spawnTimer = 0;
+      // Particle settings tuned for a subtle meteor-like trail
+      const CONFIG = {
+        maxParticles: () => (window.innerWidth > 1200 ? 30 : (window.innerWidth > 600 ? 16 : 8)),
+        spawnInterval: 120, // ms
+        baseSpeed: 120, // px per second
+        trailFade: 0.14 // fade on overlay clearing
+      };
+
+      function resize() {
+        w = canvas.width = Math.floor(canvas.clientWidth * DPR);
+        h = canvas.height = Math.floor(canvas.clientHeight * DPR);
+        canvas.style.width = canvas.clientWidth + 'px';
+        canvas.style.height = canvas.clientHeight + 'px';
+        ctx.scale(DPR, DPR);
       }
+
+      function randomRange(a,b){ return a + Math.random()*(b-a); }
+
+      function spawnParticle(){
+        const fromSide = Math.random() < 0.5 ? 'left' : 'top';
+        let x, y, angle;
+        if (fromSide === 'left') {
+          x = -20;
+          y = Math.random() * (canvas.clientHeight * 0.6);
+          angle = randomRange(-0.2, 0.3); // slight up/down
+        } else {
+          x = Math.random() * canvas.clientWidth;
+          y = -20;
+          angle = randomRange(0.15, 0.45);
+        }
+        const speed = randomRange(CONFIG.baseSpeed * 0.6, CONFIG.baseSpeed * 1.6);
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
+        const length = randomRange(40, 140);
+        const life = (Math.max(w,h) + length) / speed;
+        particles.push({ x, y, vx, vy, length, life, age: 0, alpha: randomRange(0.6, 1) });
+      }
+
+      function step(dt){
+        // semi-transparent overlay to create trailing effect
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = `rgba(0,0,0,${CONFIG.trailFade})`;
+        ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+        // draw particles as streaks
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          const px = p.x;
+          const py = p.y;
+          const nx = px + p.vx * dt;
+          const ny = py + p.vy * dt;
+          const tailX = px - (p.vx * 0.02);
+          const tailY = py - (p.vy * 0.02);
+
+          // draw streak (line) and a bright head
+          const grad = ctx.createLinearGradient(tailX, tailY, nx, ny);
+          grad.addColorStop(0, `rgba(255,255,255,${(p.alpha*0.0).toFixed(2)})`);
+          grad.addColorStop(0.6, `rgba(255,255,255,${(p.alpha*0.4).toFixed(2)})`);
+          grad.addColorStop(1, `rgba(255,255,255,${p.alpha.toFixed(2)})`);
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = Math.max(1, p.length / 80);
+          ctx.beginPath();
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(nx, ny);
+          ctx.stroke();
+
+          // bright head
+          ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+          ctx.beginPath();
+          ctx.arc(nx, ny, Math.max(0.7, ctx.lineWidth * 0.9), 0, Math.PI * 2);
+          ctx.fill();
+
+          p.x = nx; p.y = ny;
+          p.age += dt;
+          if (p.age > p.life || nx > canvas.clientWidth + 100 || ny > canvas.clientHeight + 100) {
+            particles.splice(i, 1);
+          }
+        }
+      }
+
+      let last = performance.now();
+      function loop(now){
+        const dt = Math.min(0.05, (now - last) / 1000); // seconds
+        last = now;
+
+        // spawn logic
+        spawnTimer += dt * 1000;
+        const max = CONFIG.maxParticles();
+        if (spawnTimer > CONFIG.spawnInterval) {
+          spawnTimer = 0;
+          if (particles.length < max && Math.random() < 0.9) spawnParticle();
+        }
+
+        step(dt);
+        requestAnimationFrame(loop);
+      }
+
+      function init(){
+        resize();
+        last = performance.now();
+        // pre-spawn some particles for immediate effect
+        for (let i=0;i<Math.min(CONFIG.maxParticles(), 6); i++) spawnParticle();
+        requestAnimationFrame(loop);
+      }
+
+      window.addEventListener('resize', () => { DPR = Math.max(1, window.devicePixelRatio || 1); resize(); });
+      // ensure we don't cause issues if page is hidden
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) cancelAnimationFrame(loop);
+      });
+
+      // Initialize on next tick so layout sizes are correct
+      requestAnimationFrame(init);
     })();
   </script>
 </body>
