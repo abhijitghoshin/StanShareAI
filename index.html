@@ -953,10 +953,11 @@
       let spawnTimer = 0;
       // Particle settings tuned for a subtle meteor-like trail
       const CONFIG = {
-        maxParticles: () => (window.innerWidth > 1200 ? 30 : (window.innerWidth > 600 ? 16 : 8)),
-        spawnInterval: 120, // ms
-        baseSpeed: 120, // px per second
-        trailFade: 0.14 // fade on overlay clearing
+        // Reduce particle counts for a subtle effect
+        maxParticles: () => (window.innerWidth > 1200 ? 14 : (window.innerWidth > 600 ? 8 : 4)),
+        spawnInterval: 600, // ms (lower frequency)
+        baseSpeed: 100, // px per second (slightly slower)
+        trailFade: 0.12 // fade on overlay clearing
       };
 
       function resize() {
@@ -1038,7 +1039,8 @@
         const max = CONFIG.maxParticles();
         if (spawnTimer > CONFIG.spawnInterval) {
           spawnTimer = 0;
-          if (particles.length < max && Math.random() < 0.9) spawnParticle();
+          // lower spawn probability so fewer meteors appear
+          if (particles.length < max && Math.random() < 0.4) spawnParticle();
         }
 
         step(dt);
@@ -1048,8 +1050,8 @@
       function init(){
         resize();
         last = performance.now();
-        // pre-spawn some particles for immediate effect
-        for (let i=0;i<Math.min(CONFIG.maxParticles(), 6); i++) spawnParticle();
+        // pre-spawn a couple of particles for immediate but subtle effect
+        for (let i=0;i<Math.min(CONFIG.maxParticles(), 2); i++) spawnParticle();
         requestAnimationFrame(loop);
       }
 
