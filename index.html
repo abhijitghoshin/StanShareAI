@@ -237,27 +237,23 @@
     
     /* Animation classes */
     .fade-in {
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 1s ease, transform 1s ease;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
     }
     
     .fade-in-left {
-      opacity: 1;
-      transform: translateX(0);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      opacity: 1 !important;
+      transform: translateX(0) !important;
     }
     
     .fade-in-right {
-      opacity: 1;
-      transform: translateX(0);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      opacity: 1 !important;
+      transform: translateX(0) !important;
     }
     
     .scale-in {
-      opacity: 1;
-      transform: scale(1);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      opacity: 1 !important;
+      transform: scale(1) !important;
     }
     
     /* Glass effect */
@@ -383,16 +379,23 @@
     
     /* Data flow lines */
     .data-flow {
-      position: absolute;
+      position: fixed;
       width: 2px;
       height: 100px;
       background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.5), transparent);
       animation: flow 3s ease-in-out infinite;
+      z-index: 0;
     }
     
     @keyframes flow {
-      0%, 100% { transform: translateY(-100%); opacity: 0; }
-      50% { opacity: 1; }
+      0%, 100% { 
+        transform: translateY(-100vh); 
+        opacity: 0; 
+      }
+      50% { 
+        transform: translateY(50vh);
+        opacity: 1; 
+      }
     }
     
     /* Card hover effects */
