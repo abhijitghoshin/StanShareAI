@@ -27,34 +27,60 @@ The StanShare AI website uses a **CSS-only animation system** with no JavaScript
 
 ### HTML Structure
 ```html
-<div class="space-bg"></div>
+<div id="starfield"></div>
 ```
 
 ### CSS Definition
 ```css
-.space-bg {
+#starfield {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
-  background: 
-    radial-gradient(2px 2px at 20% 30%, rgb(200, 200, 255), rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 60% 70%, rgb(150, 150, 255), rgba(0, 0, 0, 0)),
-    /* ... more gradients ... */
-    linear-gradient(to bottom, rgb(10, 10, 30) 0%, rgb(20, 30, 50) 100%);
-  background-size: 200% 200%, 300% 300%, /* ... */, 100% 100%;
-  background-position: 0% 0%;
-  animation: stars 120s linear infinite;
+  height: 100%;
+  background: #000000;
   z-index: -1;
+  overflow: hidden;
 }
 
-@keyframes stars {
-  0% {
-    background-position: 0% 0%, 10% 20%, /* ... */, 0% 0%;
+/* Static nebula background */
+#starfield::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(30, 30, 80, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(50, 20, 80, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Moving stars layer */
+#starfield::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 300%;
+  top: -100%;
+  background-image: 
+    radial-gradient(circle, white 1px, transparent 1px) 20% 10%/200px 200px,
+    radial-gradient(circle, white 2px, transparent 2px) 60% 30%/300px 300px,
+    radial-gradient(circle, white 1px, transparent 1px) 50% 50%/250px 250px,
+    radial-gradient(circle, white 1px, transparent 1px) 80% 70%/280px 280px,
+    radial-gradient(circle, white 2px, transparent 2px) 30% 80%/320px 320px,
+    radial-gradient(circle, white 1px, transparent 1px) 70% 40%/260px 260px;
+  background-repeat: repeat;
+  animation: fall 120s linear infinite;
+}
+
+@keyframes fall {
+  from { 
+    transform: translateY(0); 
   }
-  100% {
-    background-position: 100% 100%, 110% 120%, /* ... */, 100% 100%;
+  to { 
+    transform: translateY(33.333%); 
   }
 }
 ```
@@ -63,12 +89,13 @@ The StanShare AI website uses a **CSS-only animation system** with no JavaScript
 - **Duration:** 120 seconds per complete cycle
 - **Timing:** Linear (constant speed)
 - **Repetition:** Infinite loop
-- **Effect:** Parallax stars moving across viewport
+- **Effect:** Stars flowing downward smoothly from top to bottom
 - **Z-Index:** -1 (behind all content)
 - **Position:** Fixed (stays in place during scroll)
+- **Structure:** Uses `::before` for stars and `::after` for static nebula gradient
 
 ### Visual Result
-Multiple layers of radial gradients (stars) move at different speeds creating depth effect similar to Starlink tunnel visualization.
+Stars continuously flow from top to bottom creating a Starlink tunnel effect with smooth, unidirectional motion.
 
 ---
 
@@ -88,46 +115,44 @@ Multiple layers of radial gradients (stars) move at different speeds creating de
 ```css
 .data-flow {
   position: fixed;
-  top: 0;
   width: 2px;
-  height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgb(100, 150, 255) 20%,
-    rgb(100, 150, 255) 80%,
-    transparent 100%
-  );
-  animation: flow 3s ease-in-out infinite !important;
+  height: 150px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.6), transparent);
+  top: -150px;
+  animation: flowdown 4s ease-in-out infinite;
   z-index: 0;
 }
 
-@keyframes flow {
-  0% {
-    transform: translateY(-100vh);
-    opacity: 0;
+@keyframes flowdown {
+  0% { 
+    top: -150px;
+    opacity: 0; 
   }
-  50% {
+  20% {
     opacity: 1;
   }
-  100% {
-    transform: translateY(50vh);
-    opacity: 0;
+  80% {
+    opacity: 1;
+  }
+  100% { 
+    top: 100vh;
+    opacity: 0; 
   }
 }
 ```
 
 ### Animation Behavior
-- **Duration:** 3 seconds per cycle
+- **Duration:** 4 seconds per cycle
 - **Timing:** `ease-in-out` (smooth acceleration/deceleration)
-- **Movement:** From -100vh (above) to 50vh (below)
-- **Opacity:** Fade in at start, fade out at end
-- **Delay:** 0.6s stagger between each line
+- **Movement:** From top: -150px (above) to top: 100vh (below viewport)
+- **Opacity:** Fades in at 20%, stays visible until 80%, fades out by 100%
+- **Delay:** 0.6s stagger between each line for wave effect
 - **Z-Index:** 0 (behind content-wrapper)
-- **Width:** 5 lines, evenly spaced horizontally
+- **Width:** 5 lines, evenly spaced horizontally (20%, 35%, 50%, 65%, 80%)
+- **Height:** 150px per line segment
 
 ### Visual Result
-Smooth flowing vertical lines create impression of data streaming through the viewport. Staggered timing creates continuous wave effect.
+Smooth flowing vertical lines create impression of data streaming downward through the viewport. Staggered timing creates continuous wave effect with no bouncing or upward motion.
 
 ---
 
