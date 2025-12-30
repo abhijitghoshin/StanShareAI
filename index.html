@@ -197,45 +197,57 @@
       overflow-x: hidden;
     }
     
-    /* Starlink-style animated background - TOP TO BOTTOM ONLY */
+    /* Starlink-style animated background - SIMPLIFIED TOP TO BOTTOM */
     .space-bg {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
-        radial-gradient(ellipse at 20% 30%, rgba(30, 30, 80, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(50, 20, 80, 0.1) 0%, transparent 50%),
-        radial-gradient(2px 2px at 20% 30%, white, transparent),
-        radial-gradient(2px 2px at 60% 70%, white, transparent),
-        radial-gradient(1px 1px at 50% 50%, white, transparent),
-        radial-gradient(1px 1px at 80% 10%, white, transparent),
-        radial-gradient(2px 2px at 90% 60%, white, transparent),
-        radial-gradient(1px 1px at 33% 80%, white, transparent),
-        radial-gradient(1px 1px at 15% 90%, white, transparent);
-      background-size: 
-        100% 100%,
-        100% 100%,
-        200% 200%,
-        180% 180%,
-        220% 220%,
-        190% 190%,
-        210% 210%,
-        195% 195%,
-        205% 205%;
-      background-position: 0 0;
-      animation: stars 120s linear infinite;
+      background: #000000;
       z-index: -1;
-      pointer-events: none;
     }
 
-    @keyframes stars {
-      from { 
-        background-position: 0 0, 0 0, 0 -100%, 0 -100%, 0 -100%, 0 -100%, 0 -100%, 0 -100%, 0 -100%; 
+    .space-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 200%;
+      background: 
+        radial-gradient(2px 2px at 20% 10%, white, transparent),
+        radial-gradient(2px 2px at 60% 30%, white, transparent),
+        radial-gradient(1px 1px at 50% 20%, white, transparent),
+        radial-gradient(1px 1px at 80% 5%, white, transparent),
+        radial-gradient(2px 2px at 90% 25%, white, transparent),
+        radial-gradient(1px 1px at 33% 40%, white, transparent),
+        radial-gradient(1px 1px at 15% 45%, white, transparent),
+        radial-gradient(1px 1px at 75% 50%, white, transparent),
+        radial-gradient(2px 2px at 40% 55%, white, transparent);
+      background-size: 200% 200%;
+      background-repeat: repeat;
+      animation: starsfall 180s linear infinite;
+    }
+
+    .space-bg::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(ellipse at 20% 30%, rgba(30, 30, 80, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(50, 20, 80, 0.1) 0%, transparent 50%);
+    }
+
+    @keyframes starsfall {
+      0% {
+        transform: translateY(0);
       }
-      to { 
-        background-position: 0 0, 0 0, 0 100%, 0 100%, 0 100%, 0 100%, 0 100%, 0 100%, 0 100%; 
+      100% {
+        transform: translateY(50%);
       }
     }
 
@@ -381,26 +393,29 @@
       display: block;
     }
     
-    /* Data flow lines - TOP TO BOTTOM ONLY */
+    /* Data flow lines - SIMPLE TOP TO BOTTOM */
     .data-flow {
       position: fixed;
       width: 2px;
-      height: 100px;
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.5), transparent);
-      animation: flow 3s ease-in-out infinite;
+      height: 150px;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.6), transparent);
+      animation: flowdown 4s ease-in-out infinite;
       z-index: 0;
     }
 
-    @keyframes flow {
+    @keyframes flowdown {
       0% { 
-        transform: translateY(-100px); 
+        top: -150px;
         opacity: 0; 
       }
-      50% { 
-        opacity: 1; 
+      20% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
       }
       100% { 
-        transform: translateY(100vh); 
+        top: 100%;
         opacity: 0; 
       }
     }
