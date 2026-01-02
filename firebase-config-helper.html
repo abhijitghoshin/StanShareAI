@@ -1,0 +1,239 @@
+<!-- 
+  Firebase Configuration Helper
+  
+  Instructions:
+  1. Go to https://console.firebase.google.com
+  2. Create project named "StanShareAI"
+  3. Go to Project Settings > Your Apps > Web
+  4. Copy the config block
+  5. Paste your values below
+  6. Save this file
+  7. The credentials will be available for your HTML files
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Configuration Setup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .code-block {
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 20px;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+    .success {
+      background: #c8e6c9;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      color: #2e7d32;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Firebase Configuration Setup</h1>
+    <p class="subtitle">Fill in your Firebase credentials below</p>
+    
+    <div class="info-box">
+      <strong>How to get your credentials:</strong><br>
+      1. Go to <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a><br>
+      2. Create a project named "StanShareAI"<br>
+      3. Enable Google & Email/Password authentication<br>
+      4. Go to Project Settings → Your Apps → Web<br>
+      5. Copy the config object and paste values below
+    </div>
+    
+    <form id="configForm">
+      <div class="form-group">
+        <label for="apiKey">API Key</label>
+        <input type="text" id="apiKey" placeholder="AIzaSy..." required>
+      </div>
+      
+      <div class="form-group">
+        <label for="authDomain">Auth Domain</label>
+        <input type="text" id="authDomain" placeholder="stanshareai-xxxx.firebaseapp.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="projectId">Project ID</label>
+        <input type="text" id="projectId" placeholder="stanshareai-xxxx" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="storageBucket">Storage Bucket</label>
+        <input type="text" id="storageBucket" placeholder="stanshareai-xxxx.appspot.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="messagingSenderId">Messaging Sender ID</label>
+        <input type="text" id="messagingSenderId" placeholder="123456789" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="appId">App ID</label>
+        <input type="text" id="appId" placeholder="1:123456789:web:abcdef123456" required>
+      </div>
+      
+      <button type="button" onclick="generateCode()">Generate Code</button>
+      <button type="button" onclick="downloadFile()">Download as .txt</button>
+      <button type="button" onclick="copyToClipboard()">Copy to Clipboard</button>
+    </form>
+    
+    <div class="success" id="successMsg">✅ Copied to clipboard!</div>
+    
+    <div id="codeOutput" style="display: none;">
+      <h3 style="margin-top: 30px;">Generated Firebase Configuration:</h3>
+      <p style="color: #666; margin-bottom: 10px;">Copy this code into your login.html, signup.html, and dashboard.html files:</p>
+      <div class="code-block" id="generatedCode"></div>
+    </div>
+  </div>
+  
+  <script>
+    function generateCode() {
+      const apiKey = document.getElementById('apiKey').value;
+      const authDomain = document.getElementById('authDomain').value;
+      const projectId = document.getElementById('projectId').value;
+      const storageBucket = document.getElementById('storageBucket').value;
+      const messagingSenderId = document.getElementById('messagingSenderId').value;
+      const appId = document.getElementById('appId').value;
+      
+      if (!apiKey || !authDomain || !projectId) {
+        alert('Please fill in at least API Key, Auth Domain, and Project ID');
+        return;
+      }
+      
+      const code = `const firebaseConfig = {
+  apiKey: "${apiKey}",
+  authDomain: "${authDomain}",
+  projectId: "${projectId}",
+  storageBucket: "${storageBucket}",
+  messagingSenderId: "${messagingSenderId}",
+  appId: "${appId}"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();`;
+      
+      document.getElementById('generatedCode').textContent = code;
+      document.getElementById('codeOutput').style.display = 'block';
+      
+      // Store in sessionStorage for easy access
+      sessionStorage.setItem('firebaseConfig', JSON.stringify({
+        apiKey,
+        authDomain,
+        projectId,
+        storageBucket,
+        messagingSenderId,
+        appId
+      }));
+    }
+    
+    function copyToClipboard() {
+      const code = document.getElementById('generatedCode').textContent;
+      if (!code) {
+        alert('Generate code first');
+        return;
+      }
+      navigator.clipboard.writeText(code).then(() => {
+        const msg = document.getElementById('successMsg');
+        msg.style.display = 'block';
+        setTimeout(() => {
+          msg.style.display = 'none';
+        }, 2000);
+      });
+    }
+    
+    function downloadFile() {
+      const code = document.getElementById('generatedCode').textContent;
+      if (!code) {
+        alert('Generate code first');
+        return;
+      }
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(code));
+      element.setAttribute('download', 'firebase-config.txt');
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+  </script>
+</body>
+</html>
