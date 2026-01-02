@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - StanShareAI</title>
+    <title>404 - Page Not Found</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -69,52 +65,6 @@
             text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
         }
 
-        /* Smooth transitions */
-        .transition-smooth {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Card hover effect */
-        .card-hover {
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-hover:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 30px 60px rgba(0, 212, 255, 0.3);
-            border-color: rgba(0, 212, 255, 0.8) !important;
-        }
-
-        /* Glow border */
-        .glow-border {
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.1), 0 0 20px rgba(0, 212, 255, 0.1);
-        }
-
-        /* Animated button */
-        .btn-glow {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-glow::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
-            transition: left 0.5s;
-            z-index: -1;
-        }
-
-        .btn-glow:hover::before {
-            left: 100%;
-        }
-
-        /* Scroll animations */
         .fade-in {
             animation: fadeIn 0.6s ease-in-out;
         }
@@ -129,47 +79,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* Grid layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 24px;
-        }
-
-        /* Icon styling */
-        .icon-box {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 153, 255, 0.1));
-            border-radius: 12px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
-        }
-
-        /* Loading spinner */
-        .spinner {
-            border: 4px solid rgba(0, 212, 255, 0.1);
-            border-top: 4px solid #00d4ff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Auth message */
-        .auth-message {
-            text-align: center;
-            padding: 40px;
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-gray-100 overflow-x-hidden">
@@ -178,278 +87,23 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <!-- Main container -->
-    <div class="relative z-10 min-h-screen" id="dashboardContainer" style="display: none;">
-        <!-- Header -->
-        <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                        <span class="text-white font-bold">S</span>
-                    </div>
-                    <h1 class="text-2xl font-bold glow-text">StanShareAI</h1>
-                </div>
-                <nav class="flex gap-8 items-center">
-                    <a href="index.html" class="text-gray-300 hover:text-cyan-400 transition-smooth">Home</a>
-                    <a href="#" class="text-cyan-400 font-semibold border-b-2 border-cyan-400">Dashboard</a>
-                    <button onclick="logout()" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-smooth text-white font-semibold">Sign Out</button>
-                </nav>
-            </div>
-        </header>
-
-        <!-- Main content -->
-        <main class="max-w-7xl mx-auto px-6 py-12">
-            <!-- Page title -->
-            <div class="fade-in mb-12">
-                <h2 class="text-4xl font-bold mb-2">
-                    <span class="glow-text">Platform Dashboard</span>
-                </h2>
-                <p class="text-gray-400 text-lg">Access and manage your data platform capabilities</p>
-            </div>
-
-            <!-- Dashboard modules grid -->
-            <div class="dashboard-grid fade-in">
-                <!-- Analytics Module -->
-                <div class="glow-border rounded-xl p-8 card-hover" onclick="window.location.href='analytics.html';">
-                    <div class="icon-box mb-6">
-                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">Analytics</h3>
-                    <p class="text-gray-400 mb-6">Real-time insights and performance metrics</p>
-                    <div class="flex items-center gap-2 text-cyan-400">
-                        <span>Explore Analytics</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Data Management Module -->
-                <div class="glow-border rounded-xl p-8 card-hover" onclick="window.location.href='data-management.html';">
-                    <div class="icon-box mb-6">
-                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M5 19V5a2 2 0 012-2h6a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2zm0 0h14a2 2 0 002-2v-5a2 2 0 00-2-2H5m0 0V9a2 2 0 012-2h6a2 2 0 012 2v10"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">Data Management</h3>
-                    <p class="text-gray-400 mb-6">Organize and manage your datasets</p>
-                    <div class="flex items-center gap-2 text-cyan-400">
-                        <span>View Datasets</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Pipelines Module -->
-                <div class="glow-border rounded-xl p-8 card-hover opacity-50 cursor-not-allowed">
-                    <div class="icon-box mb-6">
-                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">ETL Pipelines</h3>
-                    <p class="text-gray-400 mb-6">Monitor data pipeline execution</p>
-                    <div class="flex items-center gap-2 text-gray-500">
-                        <span>Coming Soon</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Quality Checks Module -->
-                <div class="glow-border rounded-xl p-8 card-hover opacity-50 cursor-not-allowed">
-                    <div class="icon-box mb-6">
-                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 12l2 2 4-4m7-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">Quality Checks</h3>
-                    <p class="text-gray-400 mb-6">Data validation and quality monitoring</p>
-                    <div class="flex items-center gap-2 text-gray-500">
-                        <span>Coming Soon</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Alerts Module -->
-                <div class="glow-border rounded-xl p-8 card-hover opacity-50 cursor-not-allowed">
-                    <div class="icon-box mb-6">
-                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">Alerts & Monitoring</h3>
-                    <p class="text-gray-400 mb-6">Real-time alerts and system monitoring</p>
-                    <div class="flex items-center gap-2 text-gray-500">
-                        <span>Coming Soon</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Settings Module -->
-                <div class="glow-border rounded-xl p-8 card-hover opacity-50 cursor-not-allowed">
-                    <div class="icon-box mb-6">
-                        <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">Settings</h3>
-                    <p class="text-gray-400 mb-6">Configure platform preferences</p>
-                    <div class="flex items-center gap-2 text-gray-500">
-                        <span>Coming Soon</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status Section -->
-            <div class="mt-12 glow-border rounded-xl p-8 fade-in">
-                <h3 class="text-2xl font-bold mb-6">Platform Status</h3>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div>
-                        <p class="text-gray-400 text-sm mb-2">Active Modules</p>
-                        <p class="text-3xl font-bold text-cyan-400">2</p>
-                        <p class="text-xs text-gray-500 mt-1">Analytics & Data Management</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400 text-sm mb-2">System Health</p>
-                        <p class="text-lg font-bold text-green-400">✓ Optimal</p>
-                        <p class="text-xs text-gray-500 mt-1">All systems operational</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400 text-sm mb-2">Upcoming</p>
-                        <p class="text-3xl font-bold text-blue-400">4</p>
-                        <p class="text-xs text-gray-500 mt-1">Features in development</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-400 text-sm mb-2">Last Updated</p>
-                        <p class="text-lg font-bold text-gray-300">Just now</p>
-                        <p class="text-xs text-gray-500 mt-1">Real-time status</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Authentication required message -->
-    <div id="authContainer" class="relative z-10 min-h-screen flex items-center justify-center">
-        <div class="auth-message">
-            <div class="spinner" style="margin-bottom: 30px;"></div>
-            <h2 class="text-3xl font-bold mb-4 glow-text">Checking Authentication...</h2>
-            <p class="text-gray-400 mb-6">Please sign in to access the dashboard</p>
-            <a href="index.html" class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-cyan-400/50 transition-smooth btn-glow">
-                Go to Home & Sign In
+    <!-- 404 Container -->
+    <div class="relative z-10 min-h-screen flex items-center justify-center px-6">
+        <div class="text-center fade-in max-w-2xl">
+            <h1 class="text-7xl md:text-9xl font-bold mb-6">404</h1>
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">
+                <span class="glow-text">Page Not Found</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+                Like a <span class="text-cyan-400 font-semibold">Future Guarantee Return</span>, this page does not exist.
+            </p>
+            <p class="text-lg text-gray-400 mb-12">
+                Check the spelling or return to the home page.
+            </p>
+            <a href="index.html" class="inline-block px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-lg font-semibold text-white hover:shadow-lg hover:shadow-cyan-400/50 transition-all">
+                ← Back to Home
             </a>
         </div>
     </div>
-
-    <script>
-        let firebaseAuth = null;
-        let firebaseInitialized = false;
-
-        // Initialize Firebase
-        function initFirebase() {
-            if (typeof firebase === 'undefined') {
-                console.error('Firebase SDK not loaded');
-                setTimeout(initFirebase, 100);
-                return;
-            }
-
-            try {
-                const firebaseConfig = {
-                    apiKey: "AIzaSyBC1JZRfvhs924wEwYaqE7m5N5SRAphSwg",
-                    authDomain: "stanshareai.firebaseapp.com",
-                    projectId: "stanshareai",
-                    storageBucket: "stanshareai.firebasestorage.app",
-                    messagingSenderId: "316455146854",
-                    appId: "1:316455146854:web:206db1b8d8842bc34fe4a7",
-                    measurementId: "G-HG6X66LV8D"
-                };
-
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                firebaseAuth = firebase.auth();
-                firebaseInitialized = true;
-                console.log('✅ Firebase initialized successfully');
-                checkAuthentication();
-            } catch (error) {
-                console.error('Firebase initialization error:', error);
-                setTimeout(initFirebase, 500);
-            }
-        }
-
-        // Check if user is authenticated
-        function checkAuthentication() {
-            if (!firebaseAuth) {
-                setTimeout(checkAuthentication, 500);
-                return;
-            }
-
-            firebaseAuth.onAuthStateChanged((user) => {
-                if (user) {
-                    // User is authenticated
-                    console.log('User authenticated:', user.email);
-                    document.getElementById('authContainer').style.display = 'none';
-                    document.getElementById('dashboardContainer').style.display = 'block';
-                } else {
-                    // User is not authenticated
-                    console.log('User not authenticated');
-                    document.getElementById('authContainer').style.display = 'flex';
-                    document.getElementById('dashboardContainer').style.display = 'none';
-                }
-            });
-        }
-
-        // Logout function
-        function logout() {
-            if (firebaseAuth) {
-                firebaseAuth.signOut().then(() => {
-                    window.location.href = 'index.html';
-                }).catch((error) => {
-                    console.error('Logout error:', error);
-                });
-            }
-        }
-
-        // Initialize when page loads - be more aggressive
-        console.log('Page ready state:', document.readyState);
-        initFirebase();
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                console.log('DOMContentLoaded fired, re-initializing...');
-                initFirebase();
-            });
-        }
-
-        // Multiple fallback initializations
-        setTimeout(() => {
-            if (!firebaseInitialized) {
-                console.log('Fallback 1: Re-initializing Firebase...');
-                initFirebase();
-            }
-        }, 500);
-        
-        setTimeout(() => {
-            if (!firebaseInitialized) {
-                console.log('Fallback 2: Re-initializing Firebase...');
-                initFirebase();
-            }
-        }, 1500);
-
-    </script>
 </body>
 </html>
-<!-- Cache bust -->
