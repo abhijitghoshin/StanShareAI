@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Dashboard - StanShareAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: #e0e7ff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #06b6d4;
+        }
+
+        /* Main content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Controls */
+        .controls {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .control-group label {
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .control-group input,
+        .control-group select {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #e0e7ff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #06b6d4;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #06b6d4;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            color: #cbd5e1;
+        }
+
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Score badge */
+        .score-badge {
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .score-badge.high {
+            background: rgba(34, 197, 94, 0.8);
+        }
+
+        .score-badge.medium {
+            background: rgba(234, 179, 8, 0.8);
+        }
+
+        .score-badge.low {
+            background: rgba(239, 68, 68, 0.8);
+        }
+
+        /* Issue list */
+        .issues-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .issue-item {
+            background: rgba(15, 23, 42, 0.5);
+            border-left: 3px solid rgba(239, 68, 68, 0.5);
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #fca5a5;
+            border-radius: 0.25rem;
+        }
+
+        .issue-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top: 3px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: #06b6d4;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="content">
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <a href="index.html" class="logo">StanShare</a>
+                <nav>
+                    <a href="index.html">Home</a>
+                    <a href="extraction.html">Extract</a>
+                    <a href="funds.html">Funds</a>
+                    <a href="annotations.html" style="color: #06b6d4; font-weight: 600;">Quality</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-container">
+            <div class="page-header">
+                <h1>Quality Dashboard</h1>
+                <p>Data quality metrics and annotations for extracted funds</p>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <label>Batch ID:</label>
+                    <input type="text" id="batchIdInput" placeholder="Leave empty for all batches">
+                </div>
+                <button class="btn-primary" onclick="loadAnnotations()">Load Data</button>
+            </div>
+
+            <!-- Metrics Summary -->
+            <div class="metrics-grid" id="metricsGrid">
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div id="loadingState" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Loading quality data...</p>
+                </div>
+
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon">📊</div>
+                    <p>No quality data available. <a href="extraction.html" style="color: #06b6d4;">Start an extraction</a></p>
+                </div>
+
+                <table id="annotationsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Fund CIK</th>
+                            <th>Quality Score</th>
+                            <th>Completeness</th>
+                            <th>Missing Fields</th>
+                            <th>Data Issues</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="annotationsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>StanShare © 2026 | <a href="#">API Docs</a> | <a href="#">Contact</a></p>
+        </footer>
+    </div>
+
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+
+    <script>
+        const apiClient = new StanShareAPIClient();
+
+        /**
+         * Load quality annotations
+         */
+        async function loadAnnotations() {
+            try {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('annotationsTable').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+
+                const batchId = document.getElementById('batchIdInput').value || null;
+                const data = await apiClient.getAnnotations(batchId, 100);
+
+                if (!data.annotations || data.annotations.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('metricsGrid').innerHTML = '';
+                    return;
+                }
+
+                populateTable(data.annotations);
+                calculateMetrics(data.annotations);
+
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('annotationsTable').style.display = 'table';
+            } catch (error) {
+                console.error('Error loading annotations:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="empty-state-icon">❌</div>
+                    <p>Error loading data: ${error.message}</p>
+                `;
+            }
+        }
+
+        /**
+         * Populate table with annotation data
+         */
+        function populateTable(annotations) {
+            const tbody = document.getElementById('annotationsTableBody');
+            tbody.innerHTML = '';
+
+            annotations.forEach(annotation => {
+                const qualityScore = annotation.quality_score || 0;
+                const scoreClass = qualityScore >= 80 ? 'high' : qualityScore >= 60 ? 'medium' : 'low';
+
+                let missingFields = annotation.missing_fields;
+                if (typeof missingFields === 'string') {
+                    try {
+                        missingFields = JSON.parse(missingFields);
+                    } catch (e) {
+                        missingFields = [];
+                    }
+                }
+
+                let dataIssues = annotation.data_issues;
+                if (typeof dataIssues === 'string') {
+                    try {
+                        dataIssues = JSON.parse(dataIssues);
+                    } catch (e) {
+                        dataIssues = [];
+                    }
+                }
+
+                const issuesHtml = dataIssues.length > 0 
+                    ? `<div class="issues-list">${dataIssues.map(issue => `<div class="issue-item">• ${issue}</div>`).join('')}</div>`
+                    : '<span style="color: #86efac;">✓ No issues</span>';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${annotation.fund_cik || 'N/A'}</td>
+                    <td>
+                        <span class="score-badge ${scoreClass}">${qualityScore}/100</span>
+                    </td>
+                    <td>${annotation.completeness?.toFixed(1) || 0}%</td>
+                    <td>${missingFields.length > 0 ? missingFields.join(', ') : 'None'}</td>
+                    <td>${issuesHtml}</td>
+                    <td>${annotation.is_verified ? '<span style="color: #86efac;">✓ Verified</span>' : '<span style="color: #94a3b8;">Pending</span>'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        /**
+         * Calculate and display metrics
+         */
+        function calculateMetrics(annotations) {
+            const scores = annotations.map(a => a.quality_score || 0);
+            const avgScore = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+
+            const completeness = annotations.map(a => a.completeness || 0);
+            const avgCompleteness = (completeness.reduce((a, b) => a + b, 0) / completeness.length).toFixed(1);
+
+            const verified = annotations.filter(a => a.is_verified).length;
+            const verificationRate = ((verified / annotations.length) * 100).toFixed(1);
+
+            const metricsGrid = document.getElementById('metricsGrid');
+            metricsGrid.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-value">${avgScore}</div>
+                    <div class="metric-label">Avg Quality Score</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">✓</div>
+                    <div class="metric-value">${avgCompleteness}%</div>
+                    <div class="metric-label">Data Completeness</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🔍</div>
+                    <div class="metric-value">${verificationRate}%</div>
+                    <div class="metric-label">Verified Records</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-value">${annotations.length}</div>
+                    <div class="metric-label">Total Annotations</div>
+                </div>
+            `;
+        }
+
+        /**
+         * Initialize on page load
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAnnotations();
+        });
+    </script>
+</body>
+</html>

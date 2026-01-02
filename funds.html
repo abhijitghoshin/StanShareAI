@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fund Data - StanShareAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: #e0e7ff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #06b6d4;
+        }
+
+        /* Main content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Controls */
+        .controls {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .control-group label {
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .control-group input,
+        .control-group select {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #e0e7ff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #06b6d4;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            color: #cbd5e1;
+        }
+
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .fund-name {
+            font-weight: 600;
+            color: #e0e7ff;
+        }
+
+        .identifier-cell {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .currency {
+            color: #06b6d4;
+            font-weight: 500;
+        }
+
+        /* Status badge */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .pagination button {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #e0e7ff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #06b6d4;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top: 3px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: #06b6d4;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="content">
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <a href="index.html" class="logo">StanShare</a>
+                <nav>
+                    <a href="index.html">Home</a>
+                    <a href="extraction.html">Extract</a>
+                    <a href="funds.html" style="color: #06b6d4; font-weight: 600;">Funds</a>
+                    <a href="annotations.html">Quality</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-container">
+            <div class="page-header">
+                <h1>Fund Database</h1>
+                <p>Extracted SEC EDGAR fund data with comprehensive metadata</p>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <label>Records per page:</label>
+                    <input type="number" id="limitInput" value="50" min="10" max="500">
+                </div>
+                <div class="control-group">
+                    <label>Fund Type:</label>
+                    <select id="fundTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="40-34F2">40-34F2 (Mutual Funds)</option>
+                        <option value="40-F">40-F</option>
+                        <option value="485APOS">485APOS</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="loadFunds()">Load Funds</button>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div id="loadingState" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Loading funds...</p>
+                </div>
+
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon">📊</div>
+                    <p>No funds extracted yet. <a href="extraction.html" style="color: #06b6d4;">Start an extraction</a></p>
+                </div>
+
+                <table id="fundsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Fund Name</th>
+                            <th>CIK</th>
+                            <th>Ticker</th>
+                            <th>CUSIP</th>
+                            <th>Country</th>
+                            <th>AUM</th>
+                            <th>Manager</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fundsTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button id="prevBtn" onclick="previousPage()" disabled>← Previous</button>
+                <span id="pageInfo" style="align-self: center; color: #94a3b8;"></span>
+                <button id="nextBtn" onclick="nextPage()" disabled>Next →</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>StanShare © 2026 | <a href="#">API Docs</a> | <a href="#">Contact</a></p>
+        </footer>
+    </div>
+
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+
+    <script>
+        const apiClient = new StanShareAPIClient();
+        let currentOffset = 0;
+        const limit = 50;
+        let totalFunds = 0;
+
+        /**
+         * Load funds from API
+         */
+        async function loadFunds() {
+            try {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('fundsTable').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+
+                const fundType = document.getElementById('fundTypeFilter').value;
+                const limit = parseInt(document.getElementById('limitInput').value) || 50;
+
+                const data = await apiClient.getFunds(limit, currentOffset, fundType || null);
+                
+                if (!data.funds || data.funds.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    document.getElementById('loadingState').style.display = 'none';
+                    return;
+                }
+
+                totalFunds = data.total;
+                populateTable(data.funds);
+                updatePagination();
+
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('fundsTable').style.display = 'table';
+            } catch (error) {
+                console.error('Error loading funds:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="empty-state-icon">❌</div>
+                    <p>Error loading funds: ${error.message}</p>
+                `;
+            }
+        }
+
+        /**
+         * Populate table with fund data
+         */
+        function populateTable(funds) {
+            const tbody = document.getElementById('fundsTableBody');
+            tbody.innerHTML = '';
+
+            funds.forEach(fund => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="fund-name">${fund.fund_name || 'N/A'}</td>
+                    <td class="identifier-cell">${fund.cik || 'N/A'}</td>
+                    <td><strong>${fund.ticker || 'N/A'}</strong></td>
+                    <td class="identifier-cell">${fund.cusip || 'N/A'}</td>
+                    <td>${fund.country || 'N/A'}</td>
+                    <td class="currency">${StanShareAPIClient.formatCurrency(fund.aum)}</td>
+                    <td>${fund.manager || 'N/A'}</td>
+                    <td><span class="badge" style="background: rgba(59, 130, 246, 0.3); color: #06b6d4;">${fund.fund_type || 'N/A'}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        /**
+         * Update pagination controls
+         */
+        function updatePagination() {
+            const limit = parseInt(document.getElementById('limitInput').value) || 50;
+            const pageNum = Math.floor(currentOffset / limit) + 1;
+            const totalPages = Math.ceil(totalFunds / limit);
+
+            document.getElementById('pageInfo').textContent = `Page ${pageNum} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = currentOffset === 0;
+            document.getElementById('nextBtn').disabled = currentOffset + limit >= totalFunds;
+        }
+
+        /**
+         * Go to next page
+         */
+        function nextPage() {
+            const limit = parseInt(document.getElementById('limitInput').value) || 50;
+            currentOffset += limit;
+            loadFunds();
+        }
+
+        /**
+         * Go to previous page
+         */
+        function previousPage() {
+            const limit = parseInt(document.getElementById('limitInput').value) || 50;
+            currentOffset = Math.max(0, currentOffset - limit);
+            loadFunds();
+        }
+
+        /**
+         * Initialize on page load
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFunds();
+        });
+    </script>
+</body>
+</html>
