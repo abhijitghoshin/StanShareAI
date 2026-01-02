@@ -60,3 +60,39 @@ See `ANIMATIONS.md` for detailed animation specifications and `ARCHITECTURE.md` 
 ---
 
 For detailed release history, see `RELEASE_NOTES.md`.
+
+## 🔐 Firebase Authentication
+
+StanShare now includes **multi-provider authentication** powered by Firebase:
+
+### Supported Sign-In Methods
+- ✅ **Google** - Fully working
+- ✅ **Email/Password** - Fully working (auto-signup)
+- ✅ **Apple** - UI ready (needs OAuth setup)
+- ✅ **Facebook** - UI ready (needs OAuth setup)
+- ✅ **GitHub** - UI ready (needs OAuth setup)
+- ✅ **Microsoft** - UI ready (needs OAuth setup)
+
+### Features
+- Modern modal with social login buttons
+- User session persistence
+- User dropdown menu in navbar
+- Sign out functionality
+- Auto-redirect to dashboard after login
+- Error handling and user feedback
+
+### Quick Start
+1. Click "Sign In" button in navbar
+2. Click your preferred provider
+3. Authenticate with that provider
+4. You're logged in!
+
+### Documentation
+See **[FIREBASE-AUTH-COMPLETE.md](FIREBASE-AUTH-COMPLETE.md)** for:
+- Complete setup guide
+- How to enable Apple, Facebook, GitHub, Microsoft
+- Authentication flow diagram
+- All functions and features
+- Troubleshooting guide
+- Testing checklist
+
