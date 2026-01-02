@@ -1348,6 +1348,9 @@
 
     // Auth Modal Functions
     function openAuthModal() {
+        console.log('🔥 openAuthModal called');
+        console.log('🔥 firebaseInitialized:', firebaseInitialized);
+        console.log('🔥 firebaseAuth:', firebaseAuth);
         createAuthModal();
         const modal = document.getElementById('authModal');
         if (modal) {
@@ -1457,12 +1460,27 @@
         }
     }
 
-    // Initialize Firebase when page loads
+    // Initialize Firebase immediately and on DOMContentLoaded
+    console.log('🔥 Firebase init: document.readyState =', document.readyState);
+    console.log('🔥 Firebase SDK loaded?', typeof firebase !== 'undefined');
+    
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initFirebase);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔥 DOMContentLoaded fired, calling initFirebase');
+            initFirebase();
+        });
     } else {
+        console.log('🔥 Document already loaded, calling initFirebase immediately');
         initFirebase();
     }
+    
+    // Also try initializing after a short delay to ensure SDK is ready
+    setTimeout(() => {
+        if (!firebaseInitialized && typeof firebase !== 'undefined') {
+            console.log('🔥 Timeout: Firebase SDK ready but not initialized, initializing now');
+            initFirebase();
+        }
+    }, 1000);
   </script>
 
 
