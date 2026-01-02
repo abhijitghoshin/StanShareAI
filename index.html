@@ -1333,6 +1333,30 @@
                     <span>Sign in with Google</span>
                 </button>
                 
+                <!-- Apple Sign-In -->
+                <button type="button" onclick="signInWithApple()" style="width: 100%; padding: 12px; background: #000; border: 1px solid #000; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; margin-bottom: 12px; color: white;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <path d="M17.05 13.5c-.91 2.18-.41 3.96 1.33 5.5.6.6 1.26 1.01 2.04 1.35-.55.1-1.78-.02-2.39-.62-.37-.39-.74-.75-1.35-1.44-.79.51-1.12.56-1.97.56-.95 0-1.46-.3-1.46-.85 0-.51.3-.78 1.16-.98.52-.11 1.52-.13 2.37-.4.08-.02.08-.13 0-.3-.37-1.26-1.64-2.78-3.12-2.78-1.69 0-2.77 1.39-2.77 3.52 0 .59.1 1.62.24 2.79.27 2.24 1.58 3.64 3.77 3.64 1.19 0 2.29-.28 3.16-.84.93.6 1.65 1.08 2.65 1.08.55 0 .93-.23 1.15-.67.24-.51.24-1.22.12-1.86-.18-.85-.65-1.66-1.41-2.28-.32-.27-.76-.52-1.33-.75.47-.21.88-.54 1.12-1.04.15-.34.15-.79.15-1.35 0-.56-.05-1.01-.2-1.35-.12-.27-.33-.48-.6-.65z"/>
+                    </svg>
+                    <span>Sign in with Apple</span>
+                </button>
+                
+                <!-- Facebook Sign-In -->
+                <button type="button" onclick="signInWithFacebook()" style="width: 100%; padding: 12px; background: #1877F2; border: 1px solid #1877F2; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; margin-bottom: 12px; color: white;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    <span>Sign in with Facebook</span>
+                </button>
+                
+                <!-- GitHub Sign-In -->
+                <button type="button" onclick="signInWithGitHub()" style="width: 100%; padding: 12px; background: #333; border: 1px solid #333; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; margin-bottom: 12px; color: white;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>Sign in with GitHub</span>
+                </button>
+                
                 <!-- Email/Password Form -->
                 <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0; color: #999; font-size: 13px;">
                     <div style="flex: 1; height: 1px; background: #ddd;"></div>
@@ -1411,6 +1435,78 @@
                 showAuthError('Pop-up blocked. Please allow pop-ups for this site.');
             } else {
                 showAuthError(error.message || 'Google sign-in failed');
+            }
+        }
+    }
+
+    // Apple Sign-In
+    async function signInWithApple() {
+        console.log('🔥 signInWithApple called');
+        if (!firebaseAuth) {
+            showAuthError('Firebase not initialized. Please refresh the page.');
+            return;
+        }
+        
+        try {
+            const provider = new firebase.auth.OAuthProvider('apple.com');
+            const result = await firebaseAuth.signInWithPopup(provider);
+            closeAuthModal();
+            alert('✅ Welcome, ' + (result.user.displayName || result.user.email));
+            setTimeout(() => window.location.href = '/construction.html', 500);
+        } catch (error) {
+            console.error('❌ Apple sign-in error:', error);
+            if (error.code === 'auth/popup-blocked-by-browser') {
+                showAuthError('Pop-up blocked. Please allow pop-ups for this site.');
+            } else {
+                showAuthError(error.message || 'Apple sign-in failed');
+            }
+        }
+    }
+
+    // Facebook Sign-In
+    async function signInWithFacebook() {
+        console.log('🔥 signInWithFacebook called');
+        if (!firebaseAuth) {
+            showAuthError('Firebase not initialized. Please refresh the page.');
+            return;
+        }
+        
+        try {
+            const provider = new firebase.auth.FacebookAuthProvider();
+            const result = await firebaseAuth.signInWithPopup(provider);
+            closeAuthModal();
+            alert('✅ Welcome, ' + (result.user.displayName || result.user.email));
+            setTimeout(() => window.location.href = '/construction.html', 500);
+        } catch (error) {
+            console.error('❌ Facebook sign-in error:', error);
+            if (error.code === 'auth/popup-blocked-by-browser') {
+                showAuthError('Pop-up blocked. Please allow pop-ups for this site.');
+            } else {
+                showAuthError(error.message || 'Facebook sign-in failed');
+            }
+        }
+    }
+
+    // GitHub Sign-In
+    async function signInWithGitHub() {
+        console.log('🔥 signInWithGitHub called');
+        if (!firebaseAuth) {
+            showAuthError('Firebase not initialized. Please refresh the page.');
+            return;
+        }
+        
+        try {
+            const provider = new firebase.auth.GithubAuthProvider();
+            const result = await firebaseAuth.signInWithPopup(provider);
+            closeAuthModal();
+            alert('✅ Welcome, ' + (result.user.displayName || result.user.email));
+            setTimeout(() => window.location.href = '/construction.html', 500);
+        } catch (error) {
+            console.error('❌ GitHub sign-in error:', error);
+            if (error.code === 'auth/popup-blocked-by-browser') {
+                showAuthError('Pop-up blocked. Please allow pop-ups for this site.');
+            } else {
+                showAuthError(error.message || 'GitHub sign-in failed');
             }
         }
     }
