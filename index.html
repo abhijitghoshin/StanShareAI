@@ -1250,13 +1250,15 @@
             }
             firebaseAuth = firebase.auth();
             firebaseInitialized = true;
+            console.log('✅ Firebase initialized successfully');
             
             // Monitor auth state
             firebaseAuth.onAuthStateChanged((user) => {
+                console.log('Auth state changed:', user ? user.email : 'logged out');
                 updateAuthUI(user);
             });
         } catch (error) {
-            console.error('Firebase init error:', error);
+            console.error('❌ Firebase init error:', error);
         }
     }
 
@@ -1348,9 +1350,7 @@
 
     // Auth Modal Functions
     function openAuthModal() {
-        console.log('🔥 openAuthModal called');
-        console.log('🔥 firebaseInitialized:', firebaseInitialized);
-        console.log('🔥 firebaseAuth:', firebaseAuth);
+        console.log('🔥 openAuthModal called, firebaseAuth:', firebaseAuth ? 'initialized' : 'null');
         createAuthModal();
         const modal = document.getElementById('authModal');
         if (modal) {
@@ -1379,8 +1379,10 @@
 
     // Google Sign-In
     async function signInWithGoogle() {
+        console.log('🔥 signInWithGoogle called');
         if (!firebaseAuth) {
             showAuthError('Firebase not initialized. Please refresh the page.');
+            console.error('❌ firebaseAuth is null');
             return;
         }
         
@@ -1391,7 +1393,7 @@
             alert('✅ Welcome, ' + result.user.email);
             setTimeout(() => window.location.href = '/construction.html', 500);
         } catch (error) {
-            console.error('Google sign-in error:', error);
+            console.error('❌ Google sign-in error:', error);
             if (error.code === 'auth/popup-blocked-by-browser') {
                 showAuthError('Pop-up blocked. Please allow pop-ups for this site.');
             } else {
@@ -1403,9 +1405,11 @@
     // Email Sign-In
     async function signInWithEmail(event) {
         event.preventDefault();
+        console.log('🔥 signInWithEmail called');
         
         if (!firebaseAuth) {
             showAuthError('Firebase not initialized. Please refresh the page.');
+            console.error('❌ firebaseAuth is null');
             return;
         }
         
@@ -1460,54 +1464,28 @@
         }
     }
 
-    // Initialize Firebase immediately and on DOMContentLoaded
-    console.log('🔥 Firebase init: document.readyState =', document.readyState);
-    console.log('🔥 Firebase SDK loaded?', typeof firebase !== 'undefined');
+    // Initialize Firebase when page loads
+    console.log('🔥 Script executed: document.readyState =', document.readyState);
+    console.log('🔥 Firebase SDK available?', typeof firebase !== 'undefined');
     
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🔥 DOMContentLoaded fired, calling initFirebase');
+            console.log('🔥 DOMContentLoaded event fired');
             initFirebase();
         });
     } else {
-        console.log('🔥 Document already loaded, calling initFirebase immediately');
+        console.log('🔥 Document already fully loaded');
         initFirebase();
     }
     
-    // Also try initializing after a short delay to ensure SDK is ready
+    // Backup: try initializing after a short delay
     setTimeout(() => {
-        if (!firebaseInitialized && typeof firebase !== 'undefined') {
-            console.log('🔥 Timeout: Firebase SDK ready but not initialized, initializing now');
-            initFirebase();
+        if (!firebaseInitialized) {
+            console.log('🔥 Timeout check: firebaseInitialized=' + firebaseInitialized);
+            if (typeof firebase !== 'undefined') {
+                console.log('🔥 Firebase SDK is available, initializing now');
+                initFirebase();
+            }
         }
-    }, 1000);
-  </script>
-
-
-  <script>
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const message = document.getElementById('message').value;
-      
-      const subject = encodeURIComponent('New Contact Form Submission from ' + email);
-      const body = encodeURIComponent('From: ' + email + '\n\nMessage:\n' + message);
-      const mailtoLink = `mailto:founders@stanshare.com?subject=${subject}&body=${body}`;
-      
-      window.open(mailtoLink, '_blank');
-      
-      const formMessage = document.getElementById('form-message');
-      formMessage.style.display = 'block';
-      formMessage.style.color = '#ffffff';
-      formMessage.style.fontSize = '14px';
-      formMessage.textContent = '✓ Opening your email client to send the message to founders@stanshare.com';
-      
-      document.getElementById('email').value = '';
-      document.getElementById('message').value = '';
-      
-      setTimeout(() => {
-        formMessage.style.display = 'none';
-      }, 5000);
-    });
+    }, 500);
   </script>
