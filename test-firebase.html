@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Init Test</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+</head>
+<body>
+  <h1>Firebase Initialization Test</h1>
+  <div id="status" style="font-size: 18px; margin: 20px; padding: 20px; border: 2px solid #ccc;">
+    Testing Firebase...
+  </div>
+
+  <script>
+    const status = document.getElementById('status');
+    
+    // Check if firebase SDK loaded
+    setTimeout(() => {
+      if (typeof firebase !== 'undefined') {
+        status.innerHTML += '<br>✅ Firebase SDK loaded';
+      } else {
+        status.innerHTML += '<br>❌ Firebase SDK NOT loaded';
+      }
+    }, 500);
+
+    // Test with placeholder config
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    function testInit() {
+      try {
+        if (typeof firebase === 'undefined') {
+          status.innerHTML += '<br>❌ firebase object not found, retrying...';
+          setTimeout(testInit, 100);
+          return;
+        }
+        
+        status.innerHTML += '<br>✅ firebase object exists';
+        
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+          status.innerHTML += '<br>⚠️ Attempted init with PLACEHOLDER config (will fail)';
+        }
+        
+        status.innerHTML += '<br><strong>Result:</strong> Check browser console for errors';
+      } catch (error) {
+        status.innerHTML += '<br>❌ Error: ' + error.message;
+      }
+    }
+
+    // Start test
+    setTimeout(testInit, 1000);
+  </script>
+</body>
+</html>
