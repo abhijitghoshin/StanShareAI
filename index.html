@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StanShareAI - Transforming Tomorrow with AI</title>
+  <script>
+    // Redirect authenticated users to dashboard
+    window.addEventListener("load", () => {
+      if (localStorage.getItem("authToken")) {
+        window.location.href = "dashboard.html";
+      }
+    });
+  </script>
   
   <!-- Essential SEO Meta Tags -->
   <meta name="description" content="StanShareAI - AI-powered solutions for financial data quality, governance, and observability. Specialized in Funds, Equity, Fixed Income, Market & Reference Data.">
