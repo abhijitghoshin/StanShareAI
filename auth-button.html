@@ -1,0 +1,334 @@
+<!-- Firebase Authentication Button - Add this after "Solutions" link -->
+<!-- Include Firebase SDK in your <head> -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+
+<!-- Navigation Item for Login/Signup -->
+<style>
+    .auth-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+        cursor: pointer;
+        border: none;
+        font-size: 16px;
+    }
+    
+    .auth-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .auth-button.logout {
+        background: #ef4444;
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .auth-button.logout:hover {
+        background: #dc2626;
+        box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+    }
+    
+    .user-menu {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .user-menu-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        min-width: 200px;
+    }
+    
+    .user-menu-dropdown.show {
+        display: block;
+    }
+    
+    .user-menu-dropdown a,
+    .user-menu-dropdown button {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    
+    .user-menu-dropdown a:hover,
+    .user-menu-dropdown button:hover {
+        background: #f5f5f5;
+    }
+    
+    .user-menu-dropdown button {
+        color: #ef4444;
+    }
+    
+    .user-info {
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        color: #666;
+    }
+</style>
+
+<!-- Add this to your navigation menu -->
+<div id="authContainer">
+    <!-- Login/Signup Button (shown when not authenticated) -->
+    <button id="authButton" class="auth-button" onclick="openAuthModal()">
+        Sign In / Sign Up
+    </button>
+    
+    <!-- User Menu (shown when authenticated) -->
+    <div id="userMenu" class="user-menu" style="display: none;">
+        <button class="auth-button" onclick="toggleUserMenu(event)">
+            <span id="userDisplayName">Account</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"></path>
+            </svg>
+        </button>
+        <div id="userMenuDropdown" class="user-menu-dropdown">
+            <div class="user-info">
+                Signed in as<br><strong id="userEmail"></strong>
+            </div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/settings">Settings</a>
+            <button onclick="logout()">Sign Out</button>
+        </div>
+    </div>
+</div>
+
+<!-- Authentication Modal -->
+<div id="authModal" class="hidden" style="display: none;">
+    <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    " onclick="closeAuthModal(event)">
+        <div style="
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        " onclick="event.stopPropagation()">
+            
+            <button onclick="closeAuthModal()" style="
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #999;
+            ">×</button>
+            
+            <h2 style="margin: 0 0 10px; color: #333; font-size: 28px;">Welcome</h2>
+            <p style="color: #666; margin: 0 0 30px;">Sign in to access StanShare</p>
+            
+            <!-- Error Message -->
+            <div id="authError" style="display: none; padding: 12px; background: #fee; border: 1px solid #fcc; border-radius: 6px; color: #c33; margin-bottom: 20px; font-size: 14px;"></div>
+            
+            <!-- Google Sign-In -->
+            <button onclick="signInWithGoogle()" style="
+                width: 100%;
+                padding: 12px;
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                transition: all 0.3s;
+                margin-bottom: 15px;
+            " onmouseover="this.style.background='#f8f8f8'" onmouseout="this.style.background='white'">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+            </button>
+            
+            <!-- Divider -->
+            <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0; color: #999; font-size: 14px;">
+                <div style="flex: 1; height: 1px; background: #ddd;"></div>
+                <div>or</div>
+                <div style="flex: 1; height: 1px; background: #ddd;"></div>
+            </div>
+            
+            <!-- Email/Password -->
+            <form onsubmit="signInWithEmail(event)" style="display: none;" id="emailForm">
+                <input type="email" id="authEmail" placeholder="Email" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; font-size: 14px;" required />
+                <input type="password" id="authPassword" placeholder="Password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; font-size: 14px;" required />
+                <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">Sign In</button>
+            </form>
+            
+            <p style="text-align: center; color: #666; font-size: 14px; margin: 20px 0 0;">
+                <button onclick="toggleAuthForm()" style="background: none; border: none; color: #667eea; cursor: pointer; font-weight: 500;">Use email instead</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Firebase Configuration - REPLACE WITH YOUR CONFIG
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Check authentication state on page load
+    auth.onAuthStateChanged((user) => {
+        updateAuthUI(user);
+    });
+
+    // Update UI based on auth state
+    function updateAuthUI(user) {
+        const authButton = document.getElementById('authButton');
+        const userMenu = document.getElementById('userMenu');
+        
+        if (user) {
+            authButton.style.display = 'none';
+            userMenu.style.display = 'inline-block';
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userDisplayName').textContent = user.displayName || 'Account';
+        } else {
+            authButton.style.display = 'inline-flex';
+            userMenu.style.display = 'none';
+        }
+    }
+
+    // Auth Modal Functions
+    function openAuthModal() {
+        document.getElementById('authModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAuthModal(event) {
+        if (event && event.target.id !== 'authModal') return;
+        document.getElementById('authModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        document.getElementById('authError').style.display = 'none';
+    }
+
+    function showAuthError(message) {
+        const errorDiv = document.getElementById('authError');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
+    function toggleAuthForm() {
+        const form = document.getElementById('emailForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Sign In with Google
+    async function signInWithGoogle() {
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            const result = await auth.signInWithPopup(provider);
+            
+            // Redirect to dashboard or show success
+            showSuccessAndRedirect(result.user);
+        } catch (error) {
+            console.error('Google sign-in error:', error);
+            showAuthError(error.message || 'Failed to sign in with Google');
+        }
+    }
+
+    // Sign In with Email
+    async function signInWithEmail(event) {
+        event.preventDefault();
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+
+        try {
+            const result = await auth.signInWithEmailAndPassword(email, password);
+            showSuccessAndRedirect(result.user);
+        } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                // Create new account
+                try {
+                    const result = await auth.createUserWithEmailAndPassword(email, password);
+                    showSuccessAndRedirect(result.user);
+                } catch (createError) {
+                    showAuthError(createError.message);
+                }
+            } else {
+                showAuthError(error.message);
+            }
+        }
+    }
+
+    // Show success and redirect
+    function showSuccessAndRedirect(user) {
+        closeAuthModal();
+        alert('✅ Welcome, ' + (user.displayName || user.email) + '!\n\nThe post-login page is under construction.\nMore features coming soon!');
+        
+        // You can redirect to a construction page if needed:
+        // window.location.href = '/construction.html';
+    }
+
+    // User Menu
+    function toggleUserMenu(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('userMenuDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const userMenu = document.getElementById('userMenu');
+        if (userMenu && !userMenu.contains(event.target)) {
+            document.getElementById('userMenuDropdown').classList.remove('show');
+        }
+    });
+
+    // Logout
+    function logout() {
+        auth.signOut().then(() => {
+            alert('You have been signed out.');
+            location.reload();
+        });
+    }
+</script>
