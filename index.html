@@ -33,6 +33,19 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   
+  <!-- Verify Firebase SDK loaded -->
+  <script>
+    window.addEventListener('load', () => {
+      console.log('✅ Window load event fired');
+      console.log('Firebase available?', typeof firebase !== 'undefined');
+      if (typeof firebase === 'undefined') {
+        console.error('❌ Firebase SDK failed to load from CDN');
+      } else {
+        console.log('✅ Firebase SDK successfully loaded');
+      }
+    });
+  </script>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
