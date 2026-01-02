@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - StanShareAI</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="StanShareAI Dashboard - Your AI-powered financial data platform">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.17/dist/tailwind.min.css">
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7fafc;
+      color: #2d3748;
+    }
+    
+    .sidebar {
+      background: white;
+      width: 250px;
+      height: 100vh;
+      border-right: 1px solid #e2e8f0;
+      padding: 20px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      overflow-y: auto;
+    }
+    
+    .main-content {
+      margin-left: 250px;
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .nav-menu {
+      list-style: none;
+    }
+    
+    .nav-item {
+      margin: 10px 0;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      color: #4a5568;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .nav-link:hover {
+      background: #f7fafc;
+      color: #667eea;
+    }
+    
+    .nav-link.active {
+      background: #eef2ff;
+      color: #667eea;
+    }
+    
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 60px;
+      right: 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      min-width: 180px;
+      display: none;
+      z-index: 1000;
+    }
+    
+    .dropdown-menu.show {
+      display: block;
+    }
+    
+    .dropdown-item {
+      padding: 12px 16px;
+      color: #4a5568;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+    
+    .dropdown-item:hover {
+      background: #f7fafc;
+      color: #667eea;
+    }
+    
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #718096;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .card-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 5px;
+    }
+    
+    .card-subtitle {
+      font-size: 13px;
+      color: #a0aec0;
+    }
+    
+    .welcome-section {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 30px;
+    }
+    
+    .welcome-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 10px;
+    }
+    
+    .welcome-subtitle {
+      font-size: 16px;
+      color: #718096;
+      margin-bottom: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-logout {
+      background: #fed7d7;
+      color: #c53030;
+    }
+    
+    .btn-logout:hover {
+      background: #fc8181;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .user-info {
+      padding: 15px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 15px;
+    }
+    
+    .user-info-name {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+    }
+    
+    .user-info-email {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 4px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 0;
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .navbar {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">SA</div>
+      <span>StanShareAI</span>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="#dashboard" class="nav-link active">
+          <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+          </svg>
+          Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#analytics" class="nav-link">
+          <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+          </svg>
+          Analytics
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#data" class="nav-link">
+          <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          Data
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#settings" class="nav-link">
+          <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.1.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.12-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+          Settings
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div>
+        <h2 style="font-size: 20px; font-weight: 600; color: #2d3748;">Dashboard</h2>
+      </div>
+      
+      <div class="user-menu">
+        <div style="position: relative;">
+          <div id="userAvatar" class="user-avatar">U</div>
+          <div id="dropdownMenu" class="dropdown-menu">
+            <div class="user-info">
+              <div class="user-info-name" id="userName">User Name</div>
+              <div class="user-info-email" id="userEmail">user@example.com</div>
+            </div>
+            <a href="#profile" class="dropdown-item">Profile</a>
+            <a href="#settings" class="dropdown-item">Settings</a>
+            <a href="#help" class="dropdown-item">Help & Support</a>
+            <button id="logoutBtn" class="dropdown-item" style="width: 100%; text-align: left; cursor: pointer; background: none; border: none; padding: 12px 16px;">
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1 class="welcome-title">Welcome back, <span id="displayName">User</span>! 👋</h1>
+        <p class="welcome-subtitle">Monitor your financial data quality and governance in real-time</p>
+        <button class="btn btn-primary">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          Start New Project
+        </button>
+      </div>
+      
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-title">Data Quality Score</div>
+          <div class="card-value">94.2%</div>
+          <div class="card-subtitle">↑ 2.1% from last week</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Active Projects</div>
+          <div class="card-value">5</div>
+          <div class="card-subtitle">2 completed this month</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Data Processed</div>
+          <div class="card-value">2.3TB</div>
+          <div class="card-subtitle">Last 30 days</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">API Calls</div>
+          <div class="card-value">125K</div>
+          <div class="card-subtitle">This month</div>
+        </div>
+      </div>
+      
+      <!-- Content Placeholder -->
+      <div class="card">
+        <h3 style="font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 15px;">Recent Activity</h3>
+        <p style="color: #718096; font-size: 14px;">Coming soon: Real-time activity feed, analytics, and more features</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Firebase Configuration Script -->
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    
+    // DOM Elements
+    const userAvatar = document.getElementById('userAvatar');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+    const displayName = document.getElementById('displayName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    // Toggle dropdown menu
+    userAvatar.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('show');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.user-menu')) {
+        dropdownMenu.classList.remove('show');
+      }
+    });
+    
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+        localStorage.removeItem('stanshare_user');
+        localStorage.removeItem('stanshare_token');
+        window.location.href = '/login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    });
+    
+    // Check authentication
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        // User not logged in, redirect to login
+        window.location.href = '/login.html';
+      } else {
+        // Update UI with user info
+        const initials = user.displayName ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+        userAvatar.textContent = initials;
+        userName.textContent = user.displayName || 'User';
+        userEmail.textContent = user.email || 'user@example.com';
+        displayName.textContent = user.displayName ? user.displayName.split(' ')[0] : 'User';
+        
+        // Optionally load user profile picture
+        if (user.photoURL) {
+          userAvatar.style.backgroundImage = `url('${user.photoURL}')`;
+          userAvatar.style.backgroundSize = 'cover';
+          userAvatar.textContent = '';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
