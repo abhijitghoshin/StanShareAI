@@ -362,17 +362,19 @@
         function initFirebase() {
             if (typeof firebase === 'undefined') {
                 console.error('Firebase SDK not loaded');
+                setTimeout(initFirebase, 100);
                 return;
             }
 
             try {
                 const firebaseConfig = {
-                    apiKey: localStorage.getItem('FIREBASE_API_KEY') || "AIzaSyD1K5....", // Replace with actual key
-                    authDomain: localStorage.getItem('FIREBASE_AUTH_DOMAIN') || "your-app.firebaseapp.com",
-                    projectId: localStorage.getItem('FIREBASE_PROJECT_ID') || "your-project-id",
-                    storageBucket: localStorage.getItem('FIREBASE_STORAGE_BUCKET') || "your-app.appspot.com",
-                    messagingSenderId: localStorage.getItem('FIREBASE_MESSAGING_SENDER_ID') || "123456789",
-                    appId: localStorage.getItem('FIREBASE_APP_ID') || "1:123456789:web:abcdef123456"
+                    apiKey: "AIzaSyBC1JZRfvhs924wEwYaqE7m5N5SRAphSwg",
+                    authDomain: "stanshareai.firebaseapp.com",
+                    projectId: "stanshareai",
+                    storageBucket: "stanshareai.firebasestorage.app",
+                    messagingSenderId: "316455146854",
+                    appId: "1:316455146854:web:206db1b8d8842bc34fe4a7",
+                    measurementId: "G-HG6X66LV8D"
                 };
 
                 if (!firebase.apps.length) {
@@ -380,9 +382,11 @@
                 }
                 firebaseAuth = firebase.auth();
                 firebaseInitialized = true;
+                console.log('✅ Firebase initialized successfully');
                 checkAuthentication();
             } catch (error) {
                 console.error('Firebase initialization error:', error);
+                setTimeout(initFirebase, 500);
             }
         }
 
@@ -396,10 +400,12 @@
             firebaseAuth.onAuthStateChanged((user) => {
                 if (user) {
                     // User is authenticated
+                    console.log('User authenticated:', user.email);
                     document.getElementById('authContainer').style.display = 'none';
                     document.getElementById('dashboardContainer').style.display = 'block';
                 } else {
                     // User is not authenticated
+                    console.log('User not authenticated');
                     document.getElementById('authContainer').style.display = 'flex';
                     document.getElementById('dashboardContainer').style.display = 'none';
                 }
@@ -430,6 +436,7 @@
                 initFirebase();
             }
         }, 1000);
+
     </script>
 </body>
 </html>
