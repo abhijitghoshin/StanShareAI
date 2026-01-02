@@ -423,19 +423,31 @@
             }
         }
 
-        // Initialize when page loads
+        // Initialize when page loads - be more aggressive
+        console.log('Page ready state:', document.readyState);
+        initFirebase();
+        
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initFirebase);
-        } else {
-            initFirebase();
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('DOMContentLoaded fired, re-initializing...');
+                initFirebase();
+            });
         }
 
-        // Fallback initialization
+        // Multiple fallback initializations
         setTimeout(() => {
-            if (!firebaseInitialized && typeof firebase !== 'undefined') {
+            if (!firebaseInitialized) {
+                console.log('Fallback 1: Re-initializing Firebase...');
                 initFirebase();
             }
-        }, 1000);
+        }, 500);
+        
+        setTimeout(() => {
+            if (!firebaseInitialized) {
+                console.log('Fallback 2: Re-initializing Firebase...');
+                initFirebase();
+            }
+        }, 1500);
 
     </script>
 </body>
