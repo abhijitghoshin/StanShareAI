@@ -22,13 +22,158 @@ class StanShareAPIClient {
    */
   async checkHealth() {
     try {
-      const response = await fetch(`${this.baseURL}/health`);
+      const response = await fetch(`${this.baseURL}/api/health`);
       if (!response.ok) {
         throw new Error(`Health check failed: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
       console.error('Health check error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get scheduler status
+   * @returns {Promise<Object>} Scheduler status with metrics
+   */
+  async getSchedulerStatus() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/scheduler/status`);
+      if (!response.ok) {
+        throw new Error(`Scheduler status failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Scheduler status error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Start scheduler
+   * @returns {Promise<Object>} Scheduler response
+   */
+  async startScheduler() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/scheduler/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`Start scheduler failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Start scheduler error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Stop scheduler
+   * @returns {Promise<Object>} Scheduler response
+   */
+  async stopScheduler() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/scheduler/stop`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`Stop scheduler failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Stop scheduler error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all scheduled jobs
+   * @returns {Promise<Object>} List of jobs
+   */
+  async getSchedulerJobs() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/scheduler/jobs`);
+      if (!response.ok) {
+        throw new Error(`Get jobs failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Get jobs error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Run delta detection
+   * @returns {Promise<Object>} Delta detection results
+   */
+  async runDeltaDetection() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/delta/detect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`Delta detection failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Delta detection error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get delta detection report
+   * @returns {Promise<Object>} Delta report
+   */
+  async getDeltaReport() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/delta/report`);
+      if (!response.ok) {
+        throw new Error(`Delta report failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Delta report error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get stale data
+   * @returns {Promise<Object>} Stale records
+   */
+  async getStaleData() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/delta/stale-data`);
+      if (!response.ok) {
+        throw new Error(`Stale data failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Stale data error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get quality statistics
+   * @returns {Promise<Object>} Quality stats
+   */
+  async getQualityStats() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/quality/stats`);
+      if (!response.ok) {
+        throw new Error(`Quality stats failed: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Quality stats error:', error);
       throw error;
     }
   }

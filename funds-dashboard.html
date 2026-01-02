@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funds Dashboard - StanShareAI</title>
+    <script>
+        if (!localStorage.getItem('authToken')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: #e0e7ff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .table-row {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .table-row:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .badge-warning { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="content">
+        <!-- Header -->
+        <div class="bg-slate-900/50 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">SA</span>
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                        StanShareAI - Funds
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="scheduler.html" class="text-slate-300 hover:text-blue-400 transition">Scheduler</a>
+                    <a href="extraction.html" class="text-slate-300 hover:text-blue-400 transition">Extraction</a>
+                    <a href="quality.html" class="text-slate-300 hover:text-blue-400 transition">Quality</a>
+                    <button onclick="logout()" class="btn btn-primary">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Title -->
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-2">Extracted Mutual Funds</h2>
+                <p class="text-slate-400">View all funds extracted from SEC EDGAR</p>
+            </div>
+
+            <!-- Filters & Controls -->
+            <div class="card p-6 mb-6">
+                <div class="flex flex-col gap-4">
+                    <div class="flex gap-4 items-end">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium mb-2">Search by Fund Name or Ticker</label>
+                            <input type="text" id="searchInput" placeholder="e.g., Vanguard, VTSAX" 
+                                class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2 text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:outline-none transition"
+                                onkeyup="filterFunds()">
+                        </div>
+                        <button onclick="loadFunds()" class="btn btn-primary">
+                            <span id="loadBtn">Refresh Funds</span>
+                        </button>
+                    </div>
+                    <div id="loadingBar" class="hidden">
+                        <div class="loading"></div>
+                        <span class="ml-2 text-sm text-slate-400">Loading funds...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-2">Total Funds</div>
+                    <div class="text-3xl font-bold" id="totalFunds">0</div>
+                </div>
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-2">Total AUM</div>
+                    <div class="text-3xl font-bold text-green-400" id="totalAUM">$0</div>
+                </div>
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-2">Avg Quality Score</div>
+                    <div class="text-3xl font-bold text-blue-400" id="avgQuality">0%</div>
+                </div>
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-2">Last Updated</div>
+                    <div class="text-sm text-slate-300" id="lastUpdated">Never</div>
+                </div>
+            </div>
+
+            <!-- Funds Table -->
+            <div class="card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-slate-900/50 border-b border-slate-700/50">
+                                <th class="px-6 py-4 text-left text-sm font-semibold">Fund Name</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">Ticker</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">CIK</th>
+                                <th class="px-6 py-4 text-right text-sm font-semibold">AUM</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">Manager</th>
+                                <th class="px-6 py-4 text-center text-sm font-semibold">Quality</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold">Extracted</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fundsTableBody">
+                            <tr class="table-row">
+                                <td colspan="7" class="px-6 py-8 text-center text-slate-400">
+                                    <div class="loading mx-auto mb-2"></div>
+                                    Loading funds...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center gap-2 mt-6">
+                <button onclick="previousPage()" class="btn btn-primary">← Previous</button>
+                <span class="px-4 py-2 text-slate-400" id="pageInfo">Page 1</span>
+                <button onclick="nextPage()" class="btn btn-primary">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiClient = new StanShareAPIClient('http://localhost:5000');
+        let allFunds = [];
+        let currentPage = 0;
+        const fundsPerPage = 20;
+
+        async function loadFunds() {
+            try {
+                document.getElementById('loadingBar').classList.remove('hidden');
+                document.getElementById('loadBtn').textContent = 'Loading...';
+
+                const response = await apiClient.getFunds(1000, 0);
+                allFunds = response.funds || [];
+
+                // Calculate statistics
+                const totalFunds = allFunds.length;
+                const totalAUM = allFunds.reduce((sum, f) => sum + (f.aum || 0), 0);
+                const avgQuality = allFunds.length > 0 
+                    ? Math.round(allFunds.reduce((sum, f) => sum + (f.quality_score || 0), 0) / allFunds.length)
+                    : 0;
+
+                document.getElementById('totalFunds').textContent = totalFunds;
+                document.getElementById('totalAUM').textContent = StanShareAPIClient.formatCurrency(totalAUM);
+                document.getElementById('avgQuality').textContent = avgQuality + '%';
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+
+                currentPage = 0;
+                displayFunds();
+            } catch (error) {
+                console.error('Error loading funds:', error);
+                alert('Failed to load funds: ' + error.message);
+            } finally {
+                document.getElementById('loadingBar').classList.add('hidden');
+                document.getElementById('loadBtn').textContent = 'Refresh Funds';
+            }
+        }
+
+        function filterFunds() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            currentPage = 0;
+            displayFunds(searchTerm);
+        }
+
+        function displayFunds(searchTerm = '') {
+            const filtered = allFunds.filter(fund => {
+                const name = (fund.name || '').toLowerCase();
+                const ticker = (fund.ticker || '').toLowerCase();
+                const manager = (fund.manager || '').toLowerCase();
+                const search = searchTerm.toLowerCase();
+                return name.includes(search) || ticker.includes(search) || manager.includes(search);
+            });
+
+            const totalPages = Math.ceil(filtered.length / fundsPerPage);
+            const start = currentPage * fundsPerPage;
+            const end = start + fundsPerPage;
+            const pageFunds = filtered.slice(start, end);
+
+            let html = '';
+            pageFunds.forEach(fund => {
+                const qualityColor = fund.quality_score >= 90 ? 'badge-success' :
+                                   fund.quality_score >= 70 ? 'badge-warning' : 'badge-danger';
+                
+                html += `
+                    <tr class="table-row">
+                        <td class="px-6 py-4 font-medium">${fund.name || 'N/A'}</td>
+                        <td class="px-6 py-4 text-blue-400">${fund.ticker || 'N/A'}</td>
+                        <td class="px-6 py-4 text-slate-400 text-sm">${fund.cik || 'N/A'}</td>
+                        <td class="px-6 py-4 text-right text-green-400">${StanShareAPIClient.formatCurrency(fund.aum)}</td>
+                        <td class="px-6 py-4 text-slate-300">${fund.manager || 'N/A'}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="badge ${qualityColor}">${fund.quality_score || 0}%</span>
+                        </td>
+                        <td class="px-6 py-4 text-slate-400 text-sm">${StanShareAPIClient.formatDate(fund.extracted_at)}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('fundsTableBody').innerHTML = html || 
+                '<tr class="table-row"><td colspan="7" class="px-6 py-8 text-center text-slate-400">No funds found</td></tr>';
+
+            document.getElementById('pageInfo').textContent = `Page ${currentPage + 1} of ${totalPages || 1}`;
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(allFunds.length / fundsPerPage);
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                displayFunds();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                displayFunds();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = 'login.html';
+        }
+
+        // Load funds on page load
+        document.addEventListener('DOMContentLoaded', loadFunds);
+    </script>
+</body>
+</html>

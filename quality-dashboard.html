@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Dashboard - StanShareAI</title>
+    <script>
+        if (!localStorage.getItem('authToken')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: #e0e7ff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .metric-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="content">
+        <!-- Header -->
+        <div class="bg-slate-900/50 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">SA</span>
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                        StanShareAI - Quality Dashboard
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="funds-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Funds</a>
+                    <a href="scheduler-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Scheduler</a>
+                    <a href="extraction-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Extraction</a>
+                    <button onclick="logout()" class="btn btn-primary">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Title -->
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-2">Quality & Analytics</h2>
+                <p class="text-slate-400">Data quality metrics and statistics</p>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">Average Quality Score</div>
+                    <div class="text-3xl font-bold text-blue-400" id="avgQuality">0%</div>
+                    <div class="text-xs text-slate-500 mt-2">Out of 100</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">High Quality Records</div>
+                    <div class="text-3xl font-bold text-green-400" id="highQualityCount">0%</div>
+                    <div class="text-xs text-slate-500 mt-2">Score ≥ 90%</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">Medium Quality Records</div>
+                    <div class="text-3xl font-bold text-yellow-400" id="mediumQualityCount">0%</div>
+                    <div class="text-xs text-slate-500 mt-2">70% - 89%</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">Total Annotations</div>
+                    <div class="text-3xl font-bold text-cyan-400" id="totalAnnotations">0</div>
+                    <div class="text-xs text-slate-500 mt-2">All types combined</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Quality Distribution Chart -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4">Quality Score Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="qualityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Annotation Types Chart -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4">Annotation Types</h3>
+                    <div class="chart-container">
+                        <canvas id="annotationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Statistics -->
+            <div class="card p-6 mb-8">
+                <h3 class="text-lg font-semibold mb-4">Detailed Statistics</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-700/50">
+                                <th class="px-4 py-3 text-left text-slate-400">Metric</th>
+                                <th class="px-4 py-3 text-right text-slate-400">Value</th>
+                                <th class="px-4 py-3 text-right text-slate-400">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTable">
+                            <tr class="border-b border-slate-700/50">
+                                <td colspan="3" class="px-4 py-3 text-center text-slate-400">Loading statistics...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Quality Breakdown -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4">Quality Score Ranges</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Excellent (90-100%)</span>
+                                <span class="font-semibold text-green-400" id="excellent">0</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" id="excellentBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Good (70-89%)</span>
+                                <span class="font-semibold text-yellow-400" id="good">0</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-yellow-500 h-2 rounded-full" id="goodBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Fair (50-69%)</span>
+                                <span class="font-semibold text-orange-400" id="fair">0</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-orange-500 h-2 rounded-full" id="fairBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Poor (&lt;50%)</span>
+                                <span class="font-semibold text-red-400" id="poor">0</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" id="poorBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4">Data Completeness</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Fund Details</span>
+                                <span id="fundDetailCompleteness">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" id="fundDetailBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Holdings Data</span>
+                                <span id="holdingsCompleteness">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-cyan-500 h-2 rounded-full" id="holdingsBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Annotations</span>
+                                <span id="annotationCompleteness">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-700/50 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" id="annotationBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refresh Button -->
+            <div class="mt-8 text-center">
+                <button onclick="loadQualityStats()" class="btn btn-primary">
+                    🔄 Refresh Statistics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiClient = new StanShareAPIClient('http://localhost:5000');
+        let qualityChart, annotationChart;
+
+        async function loadQualityStats() {
+            try {
+                const stats = await apiClient.getQualityStats();
+                
+                // Update key metrics
+                document.getElementById('avgQuality').textContent = 
+                    Math.round(stats.avg_quality_score || 0) + '%';
+                document.getElementById('highQualityCount').textContent = 
+                    (stats.high_quality_percentage || 0).toFixed(1) + '%';
+                document.getElementById('mediumQualityCount').textContent = 
+                    (stats.medium_quality_percentage || 0).toFixed(1) + '%';
+                document.getElementById('totalAnnotations').textContent = 
+                    (stats.total_annotations || 0).toLocaleString();
+
+                // Quality score ranges
+                const total = (stats.excellent || 0) + (stats.good || 0) + (stats.fair || 0) + (stats.poor || 0) || 1;
+                document.getElementById('excellent').textContent = stats.excellent || 0;
+                document.getElementById('excellentBar').style.width = ((stats.excellent || 0) / total * 100) + '%';
+                
+                document.getElementById('good').textContent = stats.good || 0;
+                document.getElementById('goodBar').style.width = ((stats.good || 0) / total * 100) + '%';
+                
+                document.getElementById('fair').textContent = stats.fair || 0;
+                document.getElementById('fairBar').style.width = ((stats.fair || 0) / total * 100) + '%';
+                
+                document.getElementById('poor').textContent = stats.poor || 0;
+                document.getElementById('poorBar').style.width = ((stats.poor || 0) / total * 100) + '%';
+
+                // Data completeness
+                document.getElementById('fundDetailCompleteness').textContent = 
+                    Math.round(stats.fund_detail_completeness || 0) + '%';
+                document.getElementById('fundDetailBar').style.width = (stats.fund_detail_completeness || 0) + '%';
+                
+                document.getElementById('holdingsCompleteness').textContent = 
+                    Math.round(stats.holdings_completeness || 0) + '%';
+                document.getElementById('holdingsBar').style.width = (stats.holdings_completeness || 0) + '%';
+                
+                document.getElementById('annotationCompleteness').textContent = 
+                    Math.round(stats.annotation_completeness || 0) + '%';
+                document.getElementById('annotationBar').style.width = (stats.annotation_completeness || 0) + '%';
+
+                // Update charts
+                updateCharts(stats);
+
+                // Update table
+                updateStatsTable(stats);
+            } catch (error) {
+                console.error('Error loading quality stats:', error);
+                alert('Failed to load quality statistics: ' + error.message);
+            }
+        }
+
+        function updateCharts(stats) {
+            // Quality Distribution Chart
+            const qualityCtx = document.getElementById('qualityChart').getContext('2d');
+            if (qualityChart) qualityChart.destroy();
+            
+            qualityChart = new Chart(qualityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Excellent (90-100%)', 'Good (70-89%)', 'Fair (50-69%)', 'Poor (<50%)'],
+                    datasets: [{
+                        data: [
+                            stats.excellent || 0,
+                            stats.good || 0,
+                            stats.fair || 0,
+                            stats.poor || 0
+                        ],
+                        backgroundColor: [
+                            '#22c55e',
+                            '#eab308',
+                            '#f97316',
+                            '#ef4444'
+                        ],
+                        borderColor: 'rgba(15, 23, 42, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cbd5e1' }
+                        }
+                    }
+                }
+            });
+
+            // Annotation Types Chart
+            const annotationCtx = document.getElementById('annotationChart').getContext('2d');
+            if (annotationChart) annotationChart.destroy();
+            
+            annotationChart = new Chart(annotationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Prospectus', 'Holdings', 'Quality', 'Other'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [
+                            stats.annotation_prospectus || 0,
+                            stats.annotation_holdings || 0,
+                            stats.annotation_quality || 0,
+                            stats.annotation_other || 0
+                        ],
+                        backgroundColor: ['#3b82f6', '#06b6d4', '#22c55e', '#f59e0b'],
+                        borderColor: 'rgba(15, 23, 42, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { ticks: { color: '#cbd5e1' } },
+                        x: { ticks: { color: '#cbd5e1' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1' } }
+                    }
+                }
+            });
+        }
+
+        function updateStatsTable(stats) {
+            const tableBody = document.getElementById('statsTable');
+            const total = stats.total_records || 1;
+            
+            tableBody.innerHTML = `
+                <tr class="border-b border-slate-700/50">
+                    <td class="px-4 py-3">Total Records</td>
+                    <td class="px-4 py-3 text-right font-semibold">${total}</td>
+                    <td class="px-4 py-3 text-right">100%</td>
+                </tr>
+                <tr class="border-b border-slate-700/50">
+                    <td class="px-4 py-3">Excellent Quality</td>
+                    <td class="px-4 py-3 text-right font-semibold text-green-400">${stats.excellent || 0}</td>
+                    <td class="px-4 py-3 text-right text-green-400">${total > 0 ? ((stats.excellent || 0) / total * 100).toFixed(1) : 0}%</td>
+                </tr>
+                <tr class="border-b border-slate-700/50">
+                    <td class="px-4 py-3">Good Quality</td>
+                    <td class="px-4 py-3 text-right font-semibold text-yellow-400">${stats.good || 0}</td>
+                    <td class="px-4 py-3 text-right text-yellow-400">${total > 0 ? ((stats.good || 0) / total * 100).toFixed(1) : 0}%</td>
+                </tr>
+                <tr class="border-b border-slate-700/50">
+                    <td class="px-4 py-3">With Annotations</td>
+                    <td class="px-4 py-3 text-right font-semibold text-blue-400">${stats.with_annotations || 0}</td>
+                    <td class="px-4 py-3 text-right text-blue-400">${total > 0 ? ((stats.with_annotations || 0) / total * 100).toFixed(1) : 0}%</td>
+                </tr>
+            `;
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadQualityStats);
+    </script>
+</body>
+</html>

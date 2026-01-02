@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduler Monitor - StanShareAI</title>
+    <script>
+        if (!localStorage.getItem('authToken')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: #e0e7ff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-running { background: rgba(59, 130, 246, 0.2); color: #93c5fd; animation: pulse 2s infinite; }
+        .status-stopped { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+        .status-success { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .job-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .metric-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="content">
+        <!-- Header -->
+        <div class="bg-slate-900/50 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">SA</span>
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                        StanShareAI - Scheduler
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="funds-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Funds</a>
+                    <a href="extraction-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Extraction</a>
+                    <a href="quality.html" class="text-slate-300 hover:text-blue-400 transition">Quality</a>
+                    <button onclick="logout()" class="btn btn-primary">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Title -->
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-2">Scheduler Monitor</h2>
+                <p class="text-slate-400">Monitor and control automated extraction jobs</p>
+            </div>
+
+            <!-- Status Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-3">Scheduler Status</div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-2xl font-bold" id="schedulerStatus">Checking...</div>
+                        <span class="status-badge status-stopped" id="statusBadge">Stopped</span>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-3">Total Extractions</div>
+                    <div class="text-2xl font-bold text-blue-400" id="totalExtractions">0</div>
+                </div>
+                <div class="card p-6">
+                    <div class="text-slate-400 text-sm mb-3">Last Updated</div>
+                    <div class="text-sm text-slate-300" id="lastUpdated">Never</div>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="card p-6 mb-8">
+                <div class="flex gap-4 flex-wrap">
+                    <button onclick="startScheduler()" id="startBtn" class="btn btn-success">
+                        ▶ Start Scheduler
+                    </button>
+                    <button onclick="stopScheduler()" id="stopBtn" class="btn btn-danger hidden">
+                        ⏹ Stop Scheduler
+                    </button>
+                    <button onclick="refreshStatus()" class="btn btn-primary">
+                        🔄 Refresh
+                    </button>
+                    <button onclick="runDeltaDetection()" class="btn btn-primary">
+                        ⚡ Run Delta Detection
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Jobs -->
+            <div class="card p-6 mb-8">
+                <h3 class="text-xl font-bold mb-4">Active Jobs</h3>
+                <div id="jobsList">
+                    <div class="text-slate-400 text-center py-8">
+                        <div class="text-4xl mb-2">⏳</div>
+                        Loading jobs...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Status -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4">📊 Database Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Total Funds</span>
+                            <span id="dbFunds" class="font-semibold">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Total Holdings</span>
+                            <span id="dbHoldings" class="font-semibold text-blue-400">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Total Annotations</span>
+                            <span id="dbAnnotations" class="font-semibold text-green-400">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold mb-4">📈 Quality Metrics</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Average Quality Score</span>
+                            <span id="qualityScore" class="font-semibold">0%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">High Quality %</span>
+                            <span id="highQuality" class="font-semibold text-green-400">0%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Duplicates Removed</span>
+                            <span id="duplicatesRemoved" class="font-semibold text-yellow-400">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delta Detection Report -->
+            <div class="card p-6">
+                <h3 class="text-xl font-bold mb-4">🔄 Latest Delta Report</h3>
+                <div id="deltaReportContent">
+                    <div class="text-slate-400 text-center py-8">
+                        <div class="text-4xl mb-2">📋</div>
+                        Loading delta report...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiClient = new StanShareAPIClient('http://localhost:5000');
+        let refreshInterval = null;
+
+        async function loadStatus() {
+            try {
+                const status = await apiClient.getSchedulerStatus();
+                
+                // Update status display
+                document.getElementById('schedulerStatus').textContent = status.running ? 'Running' : 'Stopped';
+                const badge = document.getElementById('statusBadge');
+                badge.className = status.running ? 'status-badge status-running' : 'status-badge status-stopped';
+                badge.textContent = status.running ? 'Running' : 'Stopped';
+
+                // Update buttons
+                document.getElementById('startBtn').classList.toggle('hidden', status.running);
+                document.getElementById('stopBtn').classList.toggle('hidden', !status.running);
+
+                // Update metrics
+                document.getElementById('totalExtractions').textContent = status.total_extractions || 0;
+                document.getElementById('lastUpdated').textContent = new Date(status.last_run).toLocaleString() || 'Never';
+
+                // Database status
+                if (status.database_status) {
+                    document.getElementById('dbFunds').textContent = status.database_status.funds_total || 0;
+                    document.getElementById('dbHoldings').textContent = (status.database_status.holdings_total || 0).toLocaleString();
+                    document.getElementById('dbAnnotations').textContent = (status.database_status.annotations_total || 0).toLocaleString();
+                }
+
+                // Quality stats
+                if (status.database_status?.quality_stats) {
+                    document.getElementById('qualityScore').textContent = 
+                        Math.round(status.database_status.quality_stats.avg_confidence) + '%';
+                    document.getElementById('highQuality').textContent = 
+                        (status.database_status.quality_stats.high_quality_pct || 0).toFixed(1) + '%';
+                }
+
+                document.getElementById('duplicatesRemoved').textContent = status.total_duplicates_removed || 0;
+
+                loadJobs();
+                loadDeltaReport();
+            } catch (error) {
+                console.error('Error loading status:', error);
+                document.getElementById('jobsList').innerHTML = 
+                    '<div class="text-red-400 text-center py-8">Failed to load status</div>';
+            }
+        }
+
+        async function loadJobs() {
+            try {
+                const response = await apiClient.getSchedulerJobs();
+                const jobs = response.jobs || [];
+
+                let html = '';
+                jobs.forEach(job => {
+                    html += `
+                        <div class="job-card">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="font-semibold mb-2">${job.name || job.id}</div>
+                                    <div class="text-sm text-slate-400 mb-2">
+                                        Trigger: <span class="font-mono">${job.trigger}</span>
+                                    </div>
+                                    <div class="text-sm text-slate-300">
+                                        Next Run: <span class="font-mono">${new Date(job.next_run_time).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-success">${job.status}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('jobsList').innerHTML = html || 
+                    '<div class="text-slate-400 text-center py-8">No active jobs</div>';
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
+
+        async function loadDeltaReport() {
+            try {
+                const report = await apiClient.getDeltaReport();
+                
+                if (report.report) {
+                    const metrics = report.report.metrics || {};
+                    let html = `
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="metric-box">
+                                <div class="text-slate-400 text-xs mb-1">Total Checks</div>
+                                <div class="text-2xl font-bold">${metrics.total_checks || 0}</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="text-slate-400 text-xs mb-1">New Filings</div>
+                                <div class="text-2xl font-bold text-blue-400">${metrics.new_filings || 0}</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="text-slate-400 text-xs mb-1">Updated Funds</div>
+                                <div class="text-2xl font-bold text-green-400">${metrics.updated_funds || 0}</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="text-slate-400 text-xs mb-1">Duplicates Removed</div>
+                                <div class="text-2xl font-bold text-yellow-400">${metrics.duplicates_removed || 0}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-slate-400">
+                            Last Update: ${new Date(report.report.timestamp).toLocaleString()}
+                        </div>
+                    `;
+                    document.getElementById('deltaReportContent').innerHTML = html;
+                } else {
+                    document.getElementById('deltaReportContent').innerHTML = 
+                        '<div class="text-slate-400 text-center py-8">No delta report available yet</div>';
+                }
+            } catch (error) {
+                console.error('Error loading delta report:', error);
+            }
+        }
+
+        async function startScheduler() {
+            try {
+                await apiClient.startScheduler();
+                loadStatus();
+            } catch (error) {
+                alert('Failed to start scheduler: ' + error.message);
+            }
+        }
+
+        async function stopScheduler() {
+            try {
+                await apiClient.stopScheduler();
+                loadStatus();
+            } catch (error) {
+                alert('Failed to stop scheduler: ' + error.message);
+            }
+        }
+
+        async function runDeltaDetection() {
+            try {
+                await apiClient.runDeltaDetection();
+                alert('Delta detection started!');
+                setTimeout(loadStatus, 2000);
+            } catch (error) {
+                alert('Failed to run delta detection: ' + error.message);
+            }
+        }
+
+        function refreshStatus() {
+            loadStatus();
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = 'login.html';
+        }
+
+        // Auto-refresh every 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatus();
+            refreshInterval = setInterval(loadStatus, 5000);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) clearInterval(refreshInterval);
+        });
+    </script>
+</body>
+</html>
