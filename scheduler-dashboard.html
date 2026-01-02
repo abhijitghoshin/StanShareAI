@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scheduler Monitor - StanShareAI</title>
+    <title>Scheduler Dashboard - StanShareAI</title>
     <script>
         if (!localStorage.getItem('authToken')) {
             window.location.href = 'login.html';
@@ -67,51 +67,52 @@
             color: white;
         }
 
-        .btn-primary:hover:not(:disabled) {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
+        .btn-secondary {
+            background: rgba(148, 163, 184, 0.1);
+            color: #e0e7ff;
+            border: 1px solid rgba(148, 163, 184, 0.3);
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+        .btn-secondary:hover {
+            background: rgba(148, 163, 184, 0.2);
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .status-running { background: rgba(59, 130, 246, 0.2); color: #93c5fd; animation: pulse 2s infinite; }
-        .status-stopped { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
-        .status-success { background: rgba(34, 197, 94, 0.2); color: #86efac; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        .metric-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 20px;
         }
 
         .job-card {
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(51, 65, 85, 0.5);
             border: 1px solid rgba(148, 163, 184, 0.1);
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 12px;
         }
 
-        .metric-box {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-            padding: 16px;
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-running {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .status-stopped {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
     </style>
 </head>
@@ -126,13 +127,13 @@
                         <span class="text-white font-bold">SA</span>
                     </div>
                     <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                        StanShareAI - Scheduler
+                        StanShareAI - Scheduler Dashboard
                     </h1>
                 </div>
                 <div class="flex items-center gap-4">
                     <a href="funds-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Funds</a>
                     <a href="extraction-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Extraction</a>
-                    <a href="quality.html" class="text-slate-300 hover:text-blue-400 transition">Quality</a>
+                    <a href="quality-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Quality</a>
                     <button onclick="logout()" class="btn btn-primary">Logout</button>
                 </div>
             </div>
@@ -142,104 +143,127 @@
         <div class="max-w-7xl mx-auto px-6 py-8">
             <!-- Title -->
             <div class="mb-8">
-                <h2 class="text-3xl font-bold mb-2">Scheduler Monitor</h2>
+                <h2 class="text-3xl font-bold mb-2">Automation & Scheduling</h2>
                 <p class="text-slate-400">Monitor and control automated extraction jobs</p>
             </div>
 
-            <!-- Status Overview -->
+            <!-- Status Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="card p-6">
-                    <div class="text-slate-400 text-sm mb-3">Scheduler Status</div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold" id="schedulerStatus">Checking...</div>
-                        <span class="status-badge status-stopped" id="statusBadge">Stopped</span>
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">Scheduler Status</div>
+                    <div class="text-2xl font-bold mb-1">
+                        <span id="schedulerStatus" class="status-badge status-stopped">Stopped</span>
                     </div>
+                    <div class="text-xs text-slate-500">Current state</div>
                 </div>
-                <div class="card p-6">
-                    <div class="text-slate-400 text-sm mb-3">Total Extractions</div>
-                    <div class="text-2xl font-bold text-blue-400" id="totalExtractions">0</div>
+
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">Total Extractions</div>
+                    <div class="text-3xl font-bold text-blue-400" id="totalExtractions">0</div>
+                    <div class="text-xs text-slate-500">All time</div>
                 </div>
-                <div class="card p-6">
-                    <div class="text-slate-400 text-sm mb-3">Last Updated</div>
-                    <div class="text-sm text-slate-300" id="lastUpdated">Never</div>
+
+                <div class="metric-card">
+                    <div class="text-slate-400 text-sm mb-2">Last Updated</div>
+                    <div class="text-sm font-semibold text-slate-300" id="lastUpdated">Never</div>
+                    <div class="text-xs text-slate-500">Just now</div>
                 </div>
             </div>
 
             <!-- Control Buttons -->
             <div class="card p-6 mb-8">
-                <div class="flex gap-4 flex-wrap">
-                    <button onclick="startScheduler()" id="startBtn" class="btn btn-success">
-                        ▶ Start Scheduler
-                    </button>
-                    <button onclick="stopScheduler()" id="stopBtn" class="btn btn-danger hidden">
-                        ⏹ Stop Scheduler
-                    </button>
-                    <button onclick="refreshStatus()" class="btn btn-primary">
-                        🔄 Refresh
-                    </button>
-                    <button onclick="runDeltaDetection()" class="btn btn-primary">
-                        ⚡ Run Delta Detection
-                    </button>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="startScheduler()" id="startBtn" class="btn btn-primary">▶ Start Scheduler</button>
+                    <button onclick="stopScheduler()" id="stopBtn" class="btn btn-primary" style="display:none;">⏹ Stop Scheduler</button>
+                    <button onclick="refreshStatus()" class="btn btn-secondary">🔄 Refresh</button>
+                    <button onclick="runDeltaDetection()" class="btn btn-secondary">⚡ Run Delta Detection</button>
                 </div>
             </div>
 
             <!-- Active Jobs -->
             <div class="card p-6 mb-8">
-                <h3 class="text-xl font-bold mb-4">Active Jobs</h3>
-                <div id="jobsList">
-                    <div class="text-slate-400 text-center py-8">
-                        <div class="text-4xl mb-2">⏳</div>
-                        Loading jobs...
-                    </div>
+                <h3 class="text-lg font-semibold mb-4">Active Jobs</h3>
+                <div id="jobsList" class="space-y-2">
+                    <div class="job-card text-slate-400">Loading jobs...</div>
                 </div>
             </div>
 
             <!-- Database Status -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="card p-6">
-                    <h3 class="text-lg font-semibold mb-4">📊 Database Status</h3>
+                    <h4 class="text-sm font-semibold text-slate-400 mb-4">Database Status</h4>
                     <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Total Funds</span>
-                            <span id="dbFunds" class="font-semibold">0</span>
+                        <div>
+                            <div class="text-slate-300 text-sm">Total Funds</div>
+                            <div class="text-2xl font-bold text-blue-400" id="dbFunds">0</div>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Total Holdings</span>
-                            <span id="dbHoldings" class="font-semibold text-blue-400">0</span>
+                        <div>
+                            <div class="text-slate-300 text-sm">Total Holdings</div>
+                            <div class="text-2xl font-bold text-cyan-400" id="dbHoldings">0</div>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Total Annotations</span>
-                            <span id="dbAnnotations" class="font-semibold text-green-400">0</span>
+                        <div>
+                            <div class="text-slate-300 text-sm">Total Annotations</div>
+                            <div class="text-2xl font-bold text-green-400" id="dbAnnotations">0</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card p-6">
-                    <h3 class="text-lg font-semibold mb-4">📈 Quality Metrics</h3>
+                    <h4 class="text-sm font-semibold text-slate-400 mb-4">Quality Metrics</h4>
                     <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Average Quality Score</span>
-                            <span id="qualityScore" class="font-semibold">0%</span>
+                        <div>
+                            <div class="text-slate-300 text-sm">Average Quality Score</div>
+                            <div class="text-2xl font-bold text-green-400" id="avgQuality">0%</div>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">High Quality %</span>
-                            <span id="highQuality" class="font-semibold text-green-400">0%</span>
+                        <div>
+                            <div class="text-slate-300 text-sm">High Quality Records</div>
+                            <div class="text-2xl font-bold text-blue-400" id="highQuality">0%</div>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Duplicates Removed</span>
-                            <span id="duplicatesRemoved" class="font-semibold text-yellow-400">0</span>
+                        <div>
+                            <div class="text-slate-300 text-sm">Duplicates Removed</div>
+                            <div class="text-2xl font-bold text-yellow-400" id="duplicates">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h4 class="text-sm font-semibold text-slate-400 mb-4">Delta Detection Report</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="text-slate-300 text-sm">Total Checks</div>
+                            <div class="text-2xl font-bold text-blue-400" id="deltaChecks">0</div>
+                        </div>
+                        <div>
+                            <div class="text-slate-300 text-sm">New Filings</div>
+                            <div class="text-2xl font-bold text-cyan-400" id="deltaNew">0</div>
+                        </div>
+                        <div>
+                            <div class="text-slate-300 text-sm">Updated Funds</div>
+                            <div class="text-2xl font-bold text-green-400" id="deltaUpdated">0</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Delta Detection Report -->
-            <div class="card p-6">
-                <h3 class="text-xl font-bold mb-4">🔄 Latest Delta Report</h3>
-                <div id="deltaReportContent">
-                    <div class="text-slate-400 text-center py-8">
-                        <div class="text-4xl mb-2">📋</div>
-                        Loading delta report...
+            <!-- Last Delta Report Details -->
+            <div class="card p-6 mb-8">
+                <h4 class="text-sm font-semibold text-slate-400 mb-4">Latest Delta Detection</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">Timestamp</div>
+                        <div class="text-sm font-mono" id="deltaTimestamp">N/A</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">Status</div>
+                        <div class="text-sm font-semibold text-green-400" id="deltaStatus">Complete</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">Processing Time</div>
+                        <div class="text-sm font-mono" id="deltaTime">N/A</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">Records Affected</div>
+                        <div class="text-sm font-bold text-blue-400" id="deltaAffected">0</div>
                     </div>
                 </div>
             </div>
@@ -248,79 +272,66 @@
 
     <script>
         const apiClient = new StanShareAPIClient('http://localhost:5000');
-        let refreshInterval = null;
+        let autoRefreshInterval;
 
         async function loadStatus() {
             try {
                 const status = await apiClient.getSchedulerStatus();
                 
-                // Update status display
-                document.getElementById('schedulerStatus').textContent = status.running ? 'Running' : 'Stopped';
-                const badge = document.getElementById('statusBadge');
-                badge.className = status.running ? 'status-badge status-running' : 'status-badge status-stopped';
-                badge.textContent = status.running ? 'Running' : 'Stopped';
-
-                // Update buttons
-                document.getElementById('startBtn').classList.toggle('hidden', status.running);
-                document.getElementById('stopBtn').classList.toggle('hidden', !status.running);
-
-                // Update metrics
-                document.getElementById('totalExtractions').textContent = status.total_extractions || 0;
-                document.getElementById('lastUpdated').textContent = new Date(status.last_run).toLocaleString() || 'Never';
-
-                // Database status
-                if (status.database_status) {
-                    document.getElementById('dbFunds').textContent = status.database_status.funds_total || 0;
-                    document.getElementById('dbHoldings').textContent = (status.database_status.holdings_total || 0).toLocaleString();
-                    document.getElementById('dbAnnotations').textContent = (status.database_status.annotations_total || 0).toLocaleString();
+                // Update status
+                const statusBadge = document.getElementById('schedulerStatus');
+                if (status.running) {
+                    statusBadge.textContent = 'Running';
+                    statusBadge.className = 'status-badge status-running';
+                    document.getElementById('startBtn').style.display = 'none';
+                    document.getElementById('stopBtn').style.display = 'inline-block';
+                } else {
+                    statusBadge.textContent = 'Stopped';
+                    statusBadge.className = 'status-badge status-stopped';
+                    document.getElementById('startBtn').style.display = 'inline-block';
+                    document.getElementById('stopBtn').style.display = 'none';
                 }
 
-                // Quality stats
-                if (status.database_status?.quality_stats) {
-                    document.getElementById('qualityScore').textContent = 
-                        Math.round(status.database_status.quality_stats.avg_confidence) + '%';
-                    document.getElementById('highQuality').textContent = 
-                        (status.database_status.quality_stats.high_quality_pct || 0).toFixed(1) + '%';
-                }
+                document.getElementById('totalExtractions').textContent = (status.total_extractions || 0).toLocaleString();
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+                document.getElementById('dbFunds').textContent = (status.total_funds || 0).toLocaleString();
+                document.getElementById('dbHoldings').textContent = (status.total_holdings || 0).toLocaleString();
+                document.getElementById('dbAnnotations').textContent = (status.total_annotations || 0).toLocaleString();
+                document.getElementById('avgQuality').textContent = Math.round(status.avg_quality_score || 0) + '%';
+                document.getElementById('highQuality').textContent = (status.high_quality_percentage || 0).toFixed(1) + '%';
+                document.getElementById('duplicates').textContent = (status.duplicates_removed || 0).toLocaleString();
 
-                document.getElementById('duplicatesRemoved').textContent = status.total_duplicates_removed || 0;
-
-                loadJobs();
-                loadDeltaReport();
+                await loadJobs(status);
+                await loadDeltaReport();
             } catch (error) {
                 console.error('Error loading status:', error);
-                document.getElementById('jobsList').innerHTML = 
-                    '<div class="text-red-400 text-center py-8">Failed to load status</div>';
             }
         }
 
-        async function loadJobs() {
+        async function loadJobs(status) {
             try {
-                const response = await apiClient.getSchedulerJobs();
-                const jobs = response.jobs || [];
+                const jobs = await apiClient.getSchedulerJobs();
+                const jobsList = document.getElementById('jobsList');
+                
+                if (!jobs || jobs.length === 0) {
+                    jobsList.innerHTML = '<div class="job-card text-slate-400">No active jobs</div>';
+                    return;
+                }
 
-                let html = '';
-                jobs.forEach(job => {
-                    html += `
-                        <div class="job-card">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <div class="font-semibold mb-2">${job.name || job.id}</div>
-                                    <div class="text-sm text-slate-400 mb-2">
-                                        Trigger: <span class="font-mono">${job.trigger}</span>
-                                    </div>
-                                    <div class="text-sm text-slate-300">
-                                        Next Run: <span class="font-mono">${new Date(job.next_run_time).toLocaleString()}</span>
-                                    </div>
-                                </div>
-                                <span class="status-badge status-success">${job.status}</span>
+                jobsList.innerHTML = jobs.map(job => `
+                    <div class="job-card">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-semibold text-slate-200">${job.name || 'Unknown Job'}</div>
+                                <div class="text-xs text-slate-400">${job.trigger || 'No trigger'}</div>
                             </div>
+                            <span class="status-badge status-running">${job.status || 'Active'}</span>
                         </div>
-                    `;
-                });
-
-                document.getElementById('jobsList').innerHTML = html || 
-                    '<div class="text-slate-400 text-center py-8">No active jobs</div>';
+                        <div class="text-xs text-slate-400">
+                            Next run: ${job.next_run_time ? new Date(job.next_run_time).toLocaleString() : 'Unknown'}
+                        </div>
+                    </div>
+                `).join('');
             } catch (error) {
                 console.error('Error loading jobs:', error);
             }
@@ -330,36 +341,12 @@
             try {
                 const report = await apiClient.getDeltaReport();
                 
-                if (report.report) {
-                    const metrics = report.report.metrics || {};
-                    let html = `
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="metric-box">
-                                <div class="text-slate-400 text-xs mb-1">Total Checks</div>
-                                <div class="text-2xl font-bold">${metrics.total_checks || 0}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="text-slate-400 text-xs mb-1">New Filings</div>
-                                <div class="text-2xl font-bold text-blue-400">${metrics.new_filings || 0}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="text-slate-400 text-xs mb-1">Updated Funds</div>
-                                <div class="text-2xl font-bold text-green-400">${metrics.updated_funds || 0}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="text-slate-400 text-xs mb-1">Duplicates Removed</div>
-                                <div class="text-2xl font-bold text-yellow-400">${metrics.duplicates_removed || 0}</div>
-                            </div>
-                        </div>
-                        <div class="mt-4 text-sm text-slate-400">
-                            Last Update: ${new Date(report.report.timestamp).toLocaleString()}
-                        </div>
-                    `;
-                    document.getElementById('deltaReportContent').innerHTML = html;
-                } else {
-                    document.getElementById('deltaReportContent').innerHTML = 
-                        '<div class="text-slate-400 text-center py-8">No delta report available yet</div>';
-                }
+                document.getElementById('deltaChecks').textContent = (report.total_checks || 0).toLocaleString();
+                document.getElementById('deltaNew').textContent = (report.new_filings || 0).toLocaleString();
+                document.getElementById('deltaUpdated').textContent = (report.updated_funds || 0).toLocaleString();
+                document.getElementById('deltaTimestamp').textContent = report.timestamp ? new Date(report.timestamp).toLocaleString() : 'N/A';
+                document.getElementById('deltaTime').textContent = (report.processing_time_seconds || 0) + 's';
+                document.getElementById('deltaAffected').textContent = ((report.new_filings || 0) + (report.updated_funds || 0)).toLocaleString();
             } catch (error) {
                 console.error('Error loading delta report:', error);
             }
@@ -386,7 +373,7 @@
         async function runDeltaDetection() {
             try {
                 await apiClient.runDeltaDetection();
-                alert('Delta detection started!');
+                alert('Delta detection started');
                 setTimeout(loadStatus, 2000);
             } catch (error) {
                 alert('Failed to run delta detection: ' + error.message);
@@ -402,14 +389,13 @@
             window.location.href = 'login.html';
         }
 
-        // Auto-refresh every 5 seconds
         document.addEventListener('DOMContentLoaded', () => {
             loadStatus();
-            refreshInterval = setInterval(loadStatus, 5000);
+            autoRefreshInterval = setInterval(loadStatus, 5000);
         });
 
         window.addEventListener('beforeunload', () => {
-            if (refreshInterval) clearInterval(refreshInterval);
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
         });
     </script>
 </body>

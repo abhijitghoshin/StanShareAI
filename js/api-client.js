@@ -1,419 +1,302 @@
 /**
- * StanShareAIData API Client
- * 
- * Provides methods to interact with the Python backend API
- * for SEC EDGAR fund data extraction and quality management
+ * StanShareAI API Client
+ * Utility class for calling backend REST API endpoints
  */
 
 class StanShareAPIClient {
-  /**
-   * Initialize the API client
-   * @param {string} baseURL - Base URL of the backend API (default: http://localhost:8080)
-   */
-  constructor(baseURL = 'http://localhost:8080') {
-    this.baseURL = baseURL;
-    this.extractionBatchId = null;
-    this.pollingInterval = null;
-  }
-
-  /**
-   * Check API health status
-   * @returns {Promise<Object>} Health status response
-   */
-  async checkHealth() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/health`);
-      if (!response.ok) {
-        throw new Error(`Health check failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Health check error:', error);
-      throw error;
+    constructor(baseUrl = 'http://localhost:5000') {
+        this.baseUrl = baseUrl;
+        this.pollingInterval = null;
     }
-  }
 
-  /**
-   * Get scheduler status
-   * @returns {Promise<Object>} Scheduler status with metrics
-   */
-  async getSchedulerStatus() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/scheduler/status`);
-      if (!response.ok) {
-        throw new Error(`Scheduler status failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Scheduler status error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Start scheduler
-   * @returns {Promise<Object>} Scheduler response
-   */
-  async startScheduler() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/scheduler/start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (!response.ok) {
-        throw new Error(`Start scheduler failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Start scheduler error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Stop scheduler
-   * @returns {Promise<Object>} Scheduler response
-   */
-  async stopScheduler() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/scheduler/stop`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (!response.ok) {
-        throw new Error(`Stop scheduler failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Stop scheduler error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get all scheduled jobs
-   * @returns {Promise<Object>} List of jobs
-   */
-  async getSchedulerJobs() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/scheduler/jobs`);
-      if (!response.ok) {
-        throw new Error(`Get jobs failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Get jobs error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Run delta detection
-   * @returns {Promise<Object>} Delta detection results
-   */
-  async runDeltaDetection() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/delta/detect`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (!response.ok) {
-        throw new Error(`Delta detection failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Delta detection error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get delta detection report
-   * @returns {Promise<Object>} Delta report
-   */
-  async getDeltaReport() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/delta/report`);
-      if (!response.ok) {
-        throw new Error(`Delta report failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Delta report error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get stale data
-   * @returns {Promise<Object>} Stale records
-   */
-  async getStaleData() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/delta/stale-data`);
-      if (!response.ok) {
-        throw new Error(`Stale data failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Stale data error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get quality statistics
-   * @returns {Promise<Object>} Quality stats
-   */
-  async getQualityStats() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/quality/stats`);
-      if (!response.ok) {
-        throw new Error(`Quality stats failed: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Quality stats error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Start a new fund extraction from SEC EDGAR
-   * @param {number} count - Number of funds to extract (1-1000)
-   * @param {string} fundType - SEC form type (default: "40-34F2")
-   * @param {string} batchName - Custom batch name
-   * @returns {Promise<Object>} Extraction response with batch ID
-   */
-  async startExtraction(count = 50, fundType = '40-34F2', batchName = null) {
-    try {
-      const payload = {
-        count: Math.min(Math.max(count, 1), 1000), // Validate count between 1-1000
-        fund_type: fundType,
-      };
-
-      if (batchName) {
-        payload.batch_name = batchName;
-      }
-
-      const response = await fetch(`${this.baseURL}/api/extract`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || `Extraction failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-      this.extractionBatchId = data.batch_id;
-      return data;
-    } catch (error) {
-      console.error('Extraction start error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get the status of an extraction batch
-   * @param {string} batchId - Batch ID to check
-   * @returns {Promise<Object>} Extraction status
-   */
-  async getExtractionStatus(batchId) {
-    try {
-      const response = await fetch(`${this.baseURL}/api/extraction-status/${batchId}`);
-      
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Batch not found');
-        }
-        throw new Error(`Status check failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Status check error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Poll extraction status until completion
-   * @param {string} batchId - Batch ID to poll
-   * @param {Function} onProgress - Callback function for progress updates
-   * @param {number} pollInterval - Time between polls in milliseconds (default: 2000)
-   * @returns {Promise<Object>} Final status when complete
-   */
-  async pollExtractionStatus(batchId, onProgress = null, pollInterval = 2000) {
-    return new Promise((resolve, reject) => {
-      this.pollingInterval = setInterval(async () => {
+    /**
+     * Check API health
+     */
+    async checkHealth() {
         try {
-          const status = await this.getExtractionStatus(batchId);
-
-          // Call progress callback if provided
-          if (onProgress) {
-            onProgress(status);
-          }
-
-          // Check if extraction is complete
-          if (status.status === 'completed' || status.status === 'failed') {
-            clearInterval(this.pollingInterval);
-            resolve(status);
-          }
+            const response = await fetch(`${this.baseUrl}/api/health`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
         } catch (error) {
-          clearInterval(this.pollingInterval);
-          reject(error);
+            console.error('Error checking health:', error);
+            throw error;
         }
-      }, pollInterval);
-    });
-  }
-
-  /**
-   * Stop polling extraction status
-   */
-  stopPolling() {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-      this.pollingInterval = null;
     }
-  }
 
-  /**
-   * Retrieve extracted funds from database
-   * @param {number} limit - Number of records (default: 50, max: 500)
-   * @param {number} offset - Pagination offset (default: 0)
-   * @param {string} fundType - Filter by fund type (optional)
-   * @returns {Promise<Object>} Paginated funds list
-   */
-  async getFunds(limit = 50, offset = 0, fundType = null) {
-    try {
-      let url = `${this.baseURL}/api/funds?limit=${limit}&offset=${offset}`;
-      
-      if (fundType) {
-        url += `&fund_type=${fundType}`;
-      }
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Funds retrieval failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Funds retrieval error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get data quality annotations
-   * @param {string} batchId - Filter by extraction batch (optional)
-   * @param {number} limit - Number of records (default: 50)
-   * @returns {Promise<Object>} Annotations list
-   */
-  async getAnnotations(batchId = null, limit = 50) {
-    try {
-      let url = `${this.baseURL}/api/annotations?limit=${limit}`;
-
-      if (batchId) {
-        url += `&batch_id=${batchId}`;
-      }
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Annotations retrieval failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Annotations retrieval error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get quality metrics for a batch
-   * @param {string} batchId - Batch ID
-   * @returns {Promise<Object>} Quality metrics
-   */
-  async getQualityMetrics(batchId) {
-    try {
-      const response = await fetch(`${this.baseURL}/api/quality-metrics/${batchId}`);
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Metrics not found for batch');
+    /**
+     * Start a new extraction
+     * @param {number} fundCount - Number of funds to extract (1-500)
+     * @param {string} formType - Form type (485APOS, 10-K, 10-Q, N-1A, N-PORT)
+     * @param {string} batchName - Optional batch name
+     */
+    async startExtraction(fundCount, formType, batchName = '') {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/extract`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fund_count: fundCount,
+                    form_type: formType,
+                    batch_name: batchName
+                })
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error starting extraction:', error);
+            throw error;
         }
-        throw new Error(`Metrics retrieval failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Metrics retrieval error:', error);
-      throw error;
     }
-  }
 
-  /**
-   * Format a number as currency
-   * @param {number} amount - Amount to format
-   * @returns {string} Formatted currency string
-   */
-  static formatCurrency(amount) {
-    if (!amount) return 'N/A';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
+    /**
+     * Get extraction status
+     * @param {string} batchId - Batch ID from startExtraction
+     */
+    async getExtractionStatus(batchId) {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/extract/status?batch_id=${batchId}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting extraction status:', error);
+            throw error;
+        }
+    }
 
-  /**
-   * Format a date string
-   * @param {string} dateString - ISO date string
-   * @returns {string} Formatted date
-   */
-  static formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString();
-  }
+    /**
+     * Poll extraction status until complete
+     * @param {string} batchId - Batch ID
+     * @param {function} onProgress - Callback for progress updates
+     * @param {number} interval - Poll interval in ms (default 2000)
+     */
+    pollExtractionStatus(batchId, onProgress, interval = 2000) {
+        this.pollingInterval = setInterval(async () => {
+            try {
+                const status = await this.getExtractionStatus(batchId);
+                if (onProgress) onProgress(status);
+                if (status.status === 'completed' || status.status === 'failed') {
+                    this.stopPolling();
+                }
+            } catch (error) {
+                console.error('Error polling status:', error);
+            }
+        }, interval);
+    }
 
-  /**
-   * Get status badge color
-   * @param {string} status - Status string
-   * @returns {string} CSS class for status badge
-   */
-  static getStatusColor(status) {
-    const colors = {
-      completed: 'bg-green-500',
-      processing: 'bg-blue-500',
-      pending: 'bg-yellow-500',
-      failed: 'bg-red-500',
-    };
-    return colors[status] || 'bg-gray-500';
-  }
+    /**
+     * Stop polling
+     */
+    stopPolling() {
+        if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+        }
+    }
 
-  /**
-   * Get quality score color
-   * @param {number} score - Quality score (0-100)
-   * @returns {string} CSS class for score badge
-   */
-  static getScoreColor(score) {
-    if (score >= 90) return 'bg-green-500';
-    if (score >= 70) return 'bg-yellow-500';
-    if (score >= 50) return 'bg-orange-500';
-    return 'bg-red-500';
-  }
-}
+    /**
+     * Get all funds
+     * @param {number} limit - Number of results to return
+     * @param {number} offset - Offset for pagination
+     */
+    async getFunds(limit = 100, offset = 0) {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/funds?limit=${limit}&offset=${offset}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching funds:', error);
+            throw error;
+        }
+    }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = StanShareAPIClient;
+    /**
+     * Get annotations
+     * @param {number} limit - Number of results
+     * @param {number} offset - Offset for pagination
+     */
+    async getAnnotations(limit = 100, offset = 0) {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/annotations?limit=${limit}&offset=${offset}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching annotations:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get quality metrics
+     */
+    async getQualityMetrics() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/quality/metrics`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching quality metrics:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get scheduler status
+     */
+    async getSchedulerStatus() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/scheduler/status`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting scheduler status:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Start scheduler
+     */
+    async startScheduler() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/scheduler/start`, { method: 'POST' });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error starting scheduler:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Stop scheduler
+     */
+    async stopScheduler() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/scheduler/stop`, { method: 'POST' });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error stopping scheduler:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get scheduler jobs
+     */
+    async getSchedulerJobs() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/scheduler/jobs`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting scheduler jobs:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Run delta detection
+     */
+    async runDeltaDetection() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/delta/detect`, { method: 'POST' });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error running delta detection:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get delta report
+     */
+    async getDeltaReport() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/delta/report`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting delta report:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get stale data
+     */
+    async getStaleData() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/delta/stale-data`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting stale data:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get quality statistics
+     */
+    async getQualityStats() {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/quality/stats`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting quality stats:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Utility: Format number as currency
+     */
+    static formatCurrency(value) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(value || 0);
+    }
+
+    /**
+     * Utility: Format date
+     */
+    static formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    /**
+     * Utility: Get status color class
+     */
+    static getStatusColor(status) {
+        switch (status?.toLowerCase()) {
+            case 'completed':
+            case 'running':
+                return 'text-green-400';
+            case 'pending':
+                return 'text-yellow-400';
+            case 'failed':
+            case 'error':
+                return 'text-red-400';
+            default:
+                return 'text-slate-400';
+        }
+    }
+
+    /**
+     * Utility: Get quality score color
+     */
+    static getScoreColor(score) {
+        if (score >= 90) return 'text-green-400 bg-green-400/10';
+        if (score >= 70) return 'text-yellow-400 bg-yellow-400/10';
+        return 'text-red-400 bg-red-400/10';
+    }
 }

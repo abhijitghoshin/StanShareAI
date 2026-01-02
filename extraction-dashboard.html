@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual Extraction - StanShareAI</title>
+    <title>Extraction Dashboard - StanShareAI</title>
     <script>
         if (!localStorage.getItem('authToken')) {
             window.location.href = 'login.html';
@@ -45,6 +45,12 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(148, 163, 184, 0.1);
             border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .btn {
@@ -61,67 +67,46 @@
             color: white;
         }
 
-        .btn-primary:hover:not(:disabled) {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
         }
 
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
         .progress-bar {
-            width: 100%;
-            height: 6px;
             background: rgba(148, 163, 184, 0.1);
-            border-radius: 3px;
+            border-radius: 8px;
+            height: 8px;
             overflow: hidden;
-            margin: 1rem 0;
         }
 
         .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
             height: 100%;
-            background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-            width: 0%;
             transition: width 0.3s ease;
         }
 
-        .input-field {
-            width: 100%;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            rounded-lg;
-            padding: 10px 14px;
-            color: #e0e7ff;
-            focus:border-blue-500;
-            focus:outline: none;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .status-running { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
-        .status-success { background: rgba(34, 197, 94, 0.2); color: #86efac; }
-        .status-failed { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
-
-        .loading-spinner {
+        .spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
             border: 3px solid rgba(59, 130, 246, 0.3);
             border-radius: 50%;
             border-top-color: #3b82f6;
-            animation: spin 0.8s linear infinite;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .log-entry {
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: rgba(148, 163, 184, 0.05);
+            border-left: 3px solid #3b82f6;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -136,147 +121,182 @@
                         <span class="text-white font-bold">SA</span>
                     </div>
                     <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                        StanShareAI - Manual Extraction
+                        StanShareAI - Extraction Dashboard
                     </h1>
                 </div>
                 <div class="flex items-center gap-4">
                     <a href="funds-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Funds</a>
-                    <a href="scheduler.html" class="text-slate-300 hover:text-blue-400 transition">Scheduler</a>
-                    <a href="quality.html" class="text-slate-300 hover:text-blue-400 transition">Quality</a>
+                    <a href="scheduler-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Scheduler</a>
+                    <a href="quality-dashboard.html" class="text-slate-300 hover:text-blue-400 transition">Quality</a>
                     <button onclick="logout()" class="btn btn-primary">Logout</button>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="max-w-4xl mx-auto px-6 py-12">
-            <div class="card p-8">
-                <h2 class="text-3xl font-bold mb-2">Trigger Manual Extraction</h2>
-                <p class="text-slate-400 mb-8">Extract SEC EDGAR data on demand</p>
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Title -->
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-2">Manual Extraction Control</h2>
+                <p class="text-slate-400">Trigger SEC EDGAR extraction with real-time progress tracking</p>
+            </div>
 
-                <!-- Extraction Form -->
-                <div class="space-y-6 mb-8">
+            <!-- Extraction Form -->
+            <div class="card p-8 mb-8" id="formSection">
+                <h3 class="text-xl font-semibold mb-6">Start New Extraction</h3>
+                <form onsubmit="startExtraction(event)" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-2">Number of Funds to Extract</label>
-                        <input type="number" id="fundCount" value="50" min="1" max="500" class="input-field">
-                        <p class="text-slate-500 text-xs mt-1">Recommended: 50 funds (takes ~1 hour)</p>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Number of Funds</label>
+                        <input 
+                            type="number" 
+                            id="fundCount" 
+                            min="1" 
+                            max="500" 
+                            value="50"
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:border-blue-400"
+                        >
+                        <p class="text-xs text-slate-400 mt-1">Enter 1-500 funds to extract</p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-2">Form Type</label>
-                        <select id="formType" class="input-field">
-                            <option value="485APOS">485APOS - Mutual Fund Prospectus</option>
-                            <option value="10-K">10-K - Annual Report</option>
-                            <option value="10-Q">10-Q - Quarterly Report</option>
-                            <option value="N-1A">N-1A - Fund Prospectus</option>
-                            <option value="N-PORT">N-PORT - Fund Holdings</option>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Form Type</label>
+                        <select id="formType" class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:border-blue-400">
+                            <option value="485APOS">485APOS (Prospectus)</option>
+                            <option value="10-K">10-K (Annual Report)</option>
+                            <option value="10-Q">10-Q (Quarterly Report)</option>
+                            <option value="N-1A">N-1A (Fund Prospectus)</option>
+                            <option value="N-PORT">N-PORT (Portfolio Report)</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-2">Batch Name (Optional)</label>
-                        <input type="text" id="batchName" placeholder="e.g., January 2026 Extraction" class="input-field">
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Batch Name (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="batchName" 
+                            placeholder="e.g., Q4-2025-Batch"
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-slate-200 focus:outline-none focus:border-blue-400"
+                        >
                     </div>
 
-                    <button onclick="startExtraction()" id="extractBtn" class="btn btn-primary w-full py-3 text-lg font-semibold">
-                        Start Extraction
-                    </button>
-                </div>
+                    <button type="submit" class="btn btn-primary w-full">Start Extraction</button>
+                </form>
+            </div>
 
-                <!-- Status Section -->
-                <div id="statusSection" class="hidden space-y-4">
-                    <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="loading-spinner"></div>
-                            <span class="font-semibold">Extraction in Progress...</span>
+            <!-- Status Section -->
+            <div class="card p-8 mb-8" id="statusSection" style="display:none;">
+                <h3 class="text-xl font-semibold mb-6">Extraction in Progress</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium">Progress</span>
+                            <span class="text-sm text-blue-400"><span id="progressPercent">0</span>%</span>
                         </div>
-                        
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Progress:</span>
-                                <span id="progressText">0/50 funds</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill"></div>
-                            </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                         </div>
-
-                        <div class="mt-4 grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="text-slate-400 text-xs mb-1">Batch ID</div>
-                                <div class="text-sm font-mono bg-slate-900/50 p-2 rounded" id="batchIdDisplay">-</div>
-                            </div>
-                            <div>
-                                <div class="text-slate-400 text-xs mb-1">Status</div>
-                                <div class="text-sm">
-                                    <span class="status-badge status-running" id="statusBadge">Running</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <div class="text-slate-400 text-xs mb-2">Details</div>
-                            <div class="bg-slate-900/50 rounded p-3 text-xs text-slate-300 max-h-40 overflow-y-auto font-mono" id="detailsLog">
-                                Extraction started...
-                            </div>
-                        </div>
+                        <p class="text-xs text-slate-400 mt-2" id="progressText">Loading...</p>
                     </div>
 
-                    <button onclick="cancelExtraction()" id="cancelBtn" class="btn btn-primary w-full py-2 bg-red-600 hover:bg-red-700">
-                        Stop Monitoring
-                    </button>
-                </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-300">Batch ID</label>
+                        <input 
+                            type="text" 
+                            id="batchId" 
+                            readonly
+                            class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 text-slate-200 font-mono text-sm mt-1"
+                        >
+                    </div>
 
-                <!-- Results Section -->
-                <div id="resultsSection" class="hidden space-y-4">
-                    <div id="resultMessage" class="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                    <div>
+                        <label class="text-sm font-medium text-slate-300 mb-2 block">Status</label>
                         <div class="flex items-center gap-2">
-                            <span class="text-2xl">✓</span>
-                            <div>
-                                <div class="font-semibold">Extraction Completed Successfully!</div>
-                                <div id="resultDetails" class="text-sm text-slate-400 mt-1"></div>
-                            </div>
+                            <div class="spinner"></div>
+                            <span class="text-sm" id="statusBadge">Running</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-slate-800/50 rounded-lg p-4">
-                            <div class="text-slate-400 text-sm mb-2">Funds Extracted</div>
-                            <div class="text-2xl font-bold" id="resultFunds">0</div>
-                        </div>
-                        <div class="bg-slate-800/50 rounded-lg p-4">
-                            <div class="text-slate-400 text-sm mb-2">Total Holdings</div>
-                            <div class="text-2xl font-bold text-blue-400" id="resultHoldings">0</div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-300 mb-2 block">Details Log</label>
+                        <div class="bg-slate-900/50 rounded-lg p-4 max-h-64 overflow-y-auto border border-slate-700/50" id="detailsLog">
+                            <div class="log-entry text-slate-400">Waiting for extraction to start...</div>
                         </div>
                     </div>
 
-                    <button onclick="resetExtraction()" class="btn btn-primary w-full">
-                        Start Another Extraction
-                    </button>
-                    <a href="funds-dashboard.html" class="btn btn-primary w-full text-center">
-                        View Extracted Funds
-                    </a>
+                    <button onclick="cancelExtraction()" class="btn btn-primary w-full">Stop Monitoring</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="card p-8 mb-8" id="resultsSection" style="display:none;">
+                <h3 class="text-xl font-semibold mb-6">✅ Extraction Completed</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-green-400/10 border border-green-400/30 rounded-lg p-4">
+                        <div class="text-slate-400 text-sm mb-2">Funds Extracted</div>
+                        <div class="text-3xl font-bold text-green-400" id="resultsCount">0</div>
+                    </div>
+                    <div class="bg-blue-400/10 border border-blue-400/30 rounded-lg p-4">
+                        <div class="text-slate-400 text-sm mb-2">Holdings Added</div>
+                        <div class="text-3xl font-bold text-blue-400" id="holdingsCount">0</div>
+                    </div>
+                    <div class="bg-cyan-400/10 border border-cyan-400/30 rounded-lg p-4">
+                        <div class="text-slate-400 text-sm mb-2">Duration</div>
+                        <div class="text-2xl font-bold text-cyan-400" id="duration">0s</div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-6">
+                    <button onclick="resetExtraction()" class="btn btn-primary w-full">Start Another Extraction</button>
+                    <a href="funds-dashboard.html" class="block text-center btn bg-slate-700 hover:bg-slate-600 text-slate-200 w-full">View Extracted Funds</a>
                 </div>
             </div>
 
             <!-- Information Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="card p-6">
-                    <h3 class="text-lg font-semibold mb-3">⏱️ Typical Duration</h3>
-                    <ul class="text-slate-400 text-sm space-y-2">
-                        <li>• 50 funds: ~45-60 minutes</li>
-                        <li>• 100 funds: ~90-120 minutes</li>
-                        <li>• Includes SEC API rate limiting</li>
-                    </ul>
+                    <h4 class="font-semibold mb-3">💡 Typical Durations</h4>
+                    <div class="space-y-2 text-sm text-slate-400">
+                        <div class="flex justify-between">
+                            <span>50 funds</span>
+                            <span class="text-slate-300">45-60 min</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>100 funds</span>
+                            <span class="text-slate-300">90-120 min</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>250 funds</span>
+                            <span class="text-slate-300">4-6 hours</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>500 funds</span>
+                            <span class="text-slate-300">8-12 hours</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card p-6">
-                    <h3 class="text-lg font-semibold mb-3">📋 What Gets Extracted</h3>
-                    <ul class="text-slate-400 text-sm space-y-2">
-                        <li>• Fund details (name, ticker, AUM)</li>
-                        <li>• Holdings (securities, shares, values)</li>
-                        <li>• Annotations (source & quality data)</li>
-                    </ul>
+                    <h4 class="font-semibold mb-3">📊 What Gets Extracted</h4>
+                    <div class="space-y-2 text-sm text-slate-400">
+                        <div class="flex gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Fund details & metadata</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Holdings & allocations</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Quality annotations</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Duplicate detection</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -285,95 +305,103 @@
     <script>
         const apiClient = new StanShareAPIClient('http://localhost:5000');
         let currentBatchId = null;
-        let pollingInterval = null;
 
-        async function startExtraction() {
-            try {
-                const fundCount = parseInt(document.getElementById('fundCount').value);
-                const formType = document.getElementById('formType').value;
-                const batchName = document.getElementById('batchName').value;
+        function startExtraction(event) {
+            event.preventDefault();
+            
+            const fundCount = parseInt(document.getElementById('fundCount').value);
+            const formType = document.getElementById('formType').value;
+            const batchName = document.getElementById('batchName').value;
 
-                if (fundCount < 1 || fundCount > 500) {
-                    alert('Fund count must be between 1 and 500');
-                    return;
-                }
-
-                document.getElementById('extractBtn').disabled = true;
-                document.getElementById('statusSection').classList.remove('hidden');
-                document.getElementById('resultsSection').classList.add('hidden');
-
-                const response = await apiClient.startExtraction(fundCount, formType, batchName);
-                currentBatchId = response.batch_id;
-                document.getElementById('batchIdDisplay').textContent = currentBatchId;
-
-                pollExtractionStatus();
-            } catch (error) {
-                console.error('Error starting extraction:', error);
-                alert('Failed to start extraction: ' + error.message);
-                document.getElementById('extractBtn').disabled = false;
-                document.getElementById('statusSection').classList.add('hidden');
+            if (fundCount < 1 || fundCount > 500) {
+                alert('Fund count must be between 1 and 500');
+                return;
             }
+
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('statusSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+
+            apiClient.startExtraction(fundCount, formType, batchName)
+                .then(response => {
+                    currentBatchId = response.batch_id;
+                    document.getElementById('batchId').value = currentBatchId;
+                    addLogEntry('Extraction started: ' + currentBatchId);
+                    pollExtractionStatus();
+                })
+                .catch(error => {
+                    alert('Failed to start extraction: ' + error.message);
+                    resetExtraction();
+                });
         }
 
         function pollExtractionStatus() {
             if (!currentBatchId) return;
 
-            pollingInterval = setInterval(async () => {
+            const pollingInterval = setInterval(async () => {
                 try {
                     const status = await apiClient.getExtractionStatus(currentBatchId);
-                    
-                    // Update progress
-                    const progress = (status.processed / status.total) * 100;
-                    document.getElementById('progressFill').style.width = progress + '%';
-                    document.getElementById('progressText').textContent = `${status.processed}/${status.total} funds`;
 
-                    // Update details log
-                    const log = document.getElementById('detailsLog');
-                    log.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${status.message}</div>`;
-                    log.scrollTop = log.scrollHeight;
-
-                    // Check if complete
-                    if (status.status === 'completed' || status.status === 'failed') {
+                    if (status.status === 'running' || status.status === 'processing') {
+                        const progress = (status.processed / status.total) * 100;
+                        document.getElementById('progressFill').style.width = progress + '%';
+                        document.getElementById('progressPercent').textContent = Math.round(progress);
+                        document.getElementById('progressText').textContent = `${status.processed}/${status.total} funds extracted`;
+                        addLogEntry(`Progress: ${Math.round(progress)}% - ${status.processed}/${status.total} funds`);
+                    } else if (status.status === 'completed') {
                         clearInterval(pollingInterval);
-                        document.getElementById('extractBtn').disabled = false;
-
-                        if (status.status === 'completed') {
-                            showResults(status);
-                        } else {
-                            alert('Extraction failed: ' + status.error);
-                            resetExtraction();
-                        }
+                        document.getElementById('progressFill').style.width = '100%';
+                        document.getElementById('progressPercent').textContent = '100';
+                        document.getElementById('statusBadge').innerHTML = '<span class="text-green-400">Completed</span>';
+                        addLogEntry('Extraction completed successfully');
+                        showResults(status);
+                    } else if (status.status === 'failed') {
+                        clearInterval(pollingInterval);
+                        document.getElementById('statusBadge').innerHTML = '<span class="text-red-400">Failed</span>';
+                        addLogEntry('Extraction failed: ' + (status.error || 'Unknown error'));
+                        alert('Extraction failed: ' + (status.error || 'Unknown error'));
+                        cancelExtraction();
                     }
                 } catch (error) {
                     console.error('Error polling status:', error);
-                    clearInterval(pollingInterval);
                 }
             }, 2000);
         }
 
+        function addLogEntry(message) {
+            const log = document.getElementById('detailsLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
         function showResults(status) {
-            document.getElementById('statusSection').classList.add('hidden');
-            document.getElementById('resultsSection').classList.remove('hidden');
-            document.getElementById('resultDetails').textContent = 
-                `Batch ID: ${currentBatchId} - ${status.funds_count} funds with ${status.holdings_count} holdings`;
-            document.getElementById('resultFunds').textContent = status.funds_count;
-            document.getElementById('resultHoldings').textContent = status.holdings_count;
+            document.getElementById('statusSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsCount').textContent = status.processed || 0;
+            document.getElementById('holdingsCount').textContent = (status.holdings_count || 0).toLocaleString();
+            const duration = status.duration ? Math.round(status.duration / 60) : 0;
+            document.getElementById('duration').textContent = duration + ' min';
         }
 
         function cancelExtraction() {
-            clearInterval(pollingInterval);
-            document.getElementById('statusSection').classList.add('hidden');
-            document.getElementById('extractBtn').disabled = false;
+            apiClient.stopPolling();
+            document.getElementById('statusSection').style.display = 'none';
+            document.getElementById('formSection').style.display = 'block';
+            currentBatchId = null;
         }
 
         function resetExtraction() {
-            clearInterval(pollingInterval);
-            currentBatchId = null;
-            document.getElementById('statusSection').classList.add('hidden');
-            document.getElementById('resultsSection').classList.add('hidden');
-            document.getElementById('extractBtn').disabled = false;
-            document.getElementById('detailsLog').innerHTML = '';
             document.getElementById('fundCount').value = '50';
+            document.getElementById('formType').value = '485APOS';
+            document.getElementById('batchName').value = '';
+            document.getElementById('detailsLog').innerHTML = '<div class="log-entry text-slate-400">Waiting for extraction to start...</div>';
+            document.getElementById('formSection').style.display = 'block';
+            document.getElementById('statusSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            currentBatchId = null;
         }
 
         function logout() {
