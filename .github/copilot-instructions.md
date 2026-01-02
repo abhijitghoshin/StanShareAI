@@ -129,42 +129,53 @@ Example: `class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"` creates responsive 
 
 ### Current Implementation: Mailto
 
-**HTML:**
+**HTML (contact section):**
 ```html
-<form id="contactForm" onsubmit="handleContactForm(event)">
-  <input type="email" id="email" required />
-  <textarea id="message" required></textarea>
-  <button type="submit">Send Message</button>
-  <div id="confirmationMessage" class="hidden">Message sent successfully!</div>
+<form id="contact-form">
+  <input type="email" id="email" placeholder="YOUR EMAIL" required />
+  <textarea id="message" placeholder="YOUR MESSAGE" required></textarea>
+  <button type="submit">SEND MESSAGE</button>
+  <div id="form-message" style="display: none;"></div>
 </form>
 ```
 
-**JavaScript (lines 903-927):**
+**JavaScript (end of file):**
 ```javascript
-function handleContactForm(event) {
-  event.preventDefault();
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
   const email = document.getElementById('email').value;
   const message = document.getElementById('message').value;
   
-  const subject = encodeURIComponent("Website Inquiry");
-  const body = encodeURIComponent(message);
+  const subject = encodeURIComponent('New Contact Form Submission from ' + email);
+  const body = encodeURIComponent('From: ' + email + '\n\nMessage:\n' + message);
+  const mailtoLink = `mailto:founders@stanshare.com?subject=${subject}&body=${body}`;
   
-  window.location.href = `mailto:founders@stanshare.com?subject=${subject}&body=${body}`;
+  window.open(mailtoLink, '_blank');
   
-  document.getElementById('confirmationMessage').classList.remove('hidden');
+  const formMessage = document.getElementById('form-message');
+  formMessage.style.display = 'block';
+  formMessage.style.color = '#ffffff';
+  formMessage.style.fontSize = '14px';
+  formMessage.textContent = '✓ Opening your email client to send the message to founders@stanshare.com';
+  
+  document.getElementById('email').value = '';
+  document.getElementById('message').value = '';
+  
   setTimeout(() => {
-    document.getElementById('confirmationMessage').classList.add('hidden');
+    formMessage.style.display = 'none';
   }, 5000);
-}
+});
 ```
 
 **Key points:**
 - Uses `encodeURIComponent()` for safe URL encoding (XSS prevention)
 - Opens user's default email client (no backend needed)
-- Shows confirmation for 5 seconds then hides
+- Shows confirmation message for 5 seconds then hides
 - Email destination: `founders@stanshare.com`
+- Form IDs: `contact-form`, `email`, `message`, `form-message`
 
-**Limitation:** Won't work if user has no default email client. Future alternative: Cloudflare Workers serverless function.
+**Note:** Currently mailto-only. For future enhancements (storing submissions, Firebase integration), see "Future Enhancements" section below.
 
 ---
 
@@ -445,14 +456,62 @@ Before committing/pushing to main:
 
 ---
 
+## Future Enhancements (Planned or In Progress)
+
+### Social Login (Firebase Authentication)
+**Status:** Live on www.stanshare.com (not yet in repo)
+
+When integrating social login into the repo:
+1. Add Firebase SDK script
+2. Implement OAuth providers (Google, GitHub, LinkedIn)
+3. Create login modal/page
+4. Store user sessions in Firestore
+5. Update copilot instructions with auth flow
+
+**Files to create/modify:**
+- Add Firebase config to HTML `<head>`
+- Create `login.html` or modal in `index.html`
+- Add authentication JavaScript module
+- Update documentation: `AUTH-SETUP.md`
+
+### Contact Form Data Storage
+**Alternative to mailto:**
+```javascript
+// Example: Store form data in Firestore
+const saveContact = async (email, message) => {
+  await db.collection('contacts').add({
+    email: email,
+    message: message,
+    timestamp: new Date(),
+    status: 'new'
+  });
+};
+```
+
+### Analytics & Tracking
+- Consider: Firebase Analytics, Hotjar, Clarity
+- Privacy-first approach (GDPR compliant)
+- Document in separate `ANALYTICS.md`
+
+### Multi-Page Site (Future)
+If expanding beyond single page:
+- Migrate to Next.js or Astro
+- Implement routing and layouts
+- Update this guide significantly
+
+---
+
 ## Contact & Questions
 
 - **GitHub:** https://github.com/abhijitghoshin/StanShareAI
 - **Email:** founders@stanshare.com
-- **Live site:** https://stanshare.com
+- **Live site:** https://www.stanshare.com
 
 ---
 
 **Last Updated:** January 2, 2026  
 **Status:** ✅ Production-Ready  
-**Maintained By:** StanShare AI Team
+**Current Implementation:** Single-page marketing site (no auth)  
+**Maintained By:** StanShare AI Team  
+
+**Note:** This documentation reflects the code repository state. Live site (www.stanshare.com) may have additional features not yet merged to main branch.
