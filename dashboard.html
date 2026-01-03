@@ -4,205 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - StanShareAI</title>
-    <link rel="stylesheet" href="styles/dashboard.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 600px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .redirect-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .redirect-link {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        
+        .redirect-link:hover {
+            text-decoration: underline;
+        }
+
+        .iframe-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <span class="logo-icon">⭐</span>
-                <span class="logo-text">StanShareAI</span>
-            </div>
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-
-        <!-- Navigation Menu -->
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <div class="nav-section-title">Dashboard</div>
-                <div class="nav-item active" onclick="loadDashboard()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
-                        <line x1="12" y1="12" x2="20" y2="7.5"></line>
-                        <line x1="12" y1="12" x2="12" y2="21"></line>
-                        <line x1="12" y1="12" x2="4" y2="7.5"></line>
-                    </svg>
-                    <span>Overview</span>
-                </div>
-                <div class="nav-item" onclick="loadPage('extraction.html')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
-                        <line x1="12" y1="12" x2="20" y2="7.5"></line>
-                        <line x1="12" y1="12" x2="12" y2="21"></line>
-                        <line x1="12" y1="12" x2="4" y2="7.5"></line>
-                    </svg>
-                    <span>Extract Funds</span>
-                </div>
-                <div class="nav-item" onclick="loadPage('funds.html')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                    <span>Browse Funds</span>
-                </div>
-                <div class="nav-item" onclick="loadPage('annotations.html')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span>Quality Dashboard</span>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Account</div>
-                <div class="nav-item" onclick="showSettings()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="1"></circle>
-                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 0l4.24-4.24M1 12h6m6 0h6m-1.78 7.78l-4.24-4.24m-5.08 0l-4.24 4.24"></path>
-                    </svg>
-                    <span>Settings</span>
-                </div>
-                <div class="nav-item" onclick="handleLogout()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    <span>Logout</span>
-                </div>
-            </div>
-        </nav>
-
-        <!-- User Info Section -->
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">U</div>
-                <div class="user-details">
-                    <div class="user-name" id="userName">User</div>
-                    <div class="user-email" id="userEmail">user@example.com</div>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="main-content">
-        <!-- Top Navigation Bar -->
-        <div class="topbar">
-            <div class="topbar-left">
-                <button class="hamburger" onclick="toggleSidebar()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
-                <h1 class="page-title" id="pageTitle">Dashboard</h1>
-            </div>
-
-            <div class="topbar-right">
-                <button class="topbar-btn" onclick="handleNotifications()" title="Notifications">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                </button>
-                <button class="topbar-btn" onclick="handleProfile()" title="Profile">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </button>
-                <div class="avatar-small" id="avatarSmall" onclick="showSettings()" title="Settings">U</div>
-            </div>
-        </div>
-
-        <!-- Content Frame -->
-        <div class="content-frame">
-            <div id="contentFrame">
-                <div style="padding: 40px; text-align: center; color: #94a3b8;">
-                    <p>Loading dashboard...</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button class="modal-close" onclick="closeModal('settingsModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="settings-section">
-                    <h3>Profile Settings</h3>
-                    <div class="setting-item">
-                        <label>Email</label>
-                        <input type="email" id="settingsEmail" readonly style="background-color: #1e293b; border: 1px solid #334155; color: #e0e7ff; padding: 8px 12px; border-radius: 6px; width: 100%;">
-                    </div>
-                    <div class="setting-item">
-                        <label>Account Type</label>
-                        <input type="text" id="settingsType" readonly style="background-color: #1e293b; border: 1px solid #334155; color: #e0e7ff; padding: 8px 12px; border-radius: 6px; width: 100%;">
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h3>API Configuration</h3>
-                    <div class="setting-item">
-                        <label>API Endpoint</label>
-                        <input type="text" id="apiEndpoint" value="http://localhost:8080" style="background-color: #1e293b; border: 1px solid #334155; color: #e0e7ff; padding: 8px 12px; border-radius: 6px; width: 100%;">
-                    </div>
-                    <button onclick="saveAPISettings()" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 8px;">
-                        Save Settings
-                    </button>
-                </div>
-
-                <div class="settings-section">
-                    <h3>About</h3>
-                    <p style="color: #94a3b8; font-size: 13px;">
-                        <strong>StanShareAI Dashboard v1.0</strong><br>
-                        SEC EDGAR Fund Data Management Platform<br>
-                        Built with vanilla JavaScript & Python Flask
-                    </p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal('settingsModal')" style="background: #334155; color: #e0e7ff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-                    Close
-                </button>
-            </div>
+    <div class="container" id="loadingContainer">
+        <div class="loading-spinner"></div>
+        <h1>Loading Dashboard...</h1>
+        <p>Redirecting to the new analytics platform</p>
+        <div class="redirect-info">
+            <p>If you are not automatically redirected, visit:</p>
+            <p><a href="https://stanshare.onrender.com/dashboard" class="redirect-link">https://stanshare.onrender.com/dashboard</a></p>
         </div>
     </div>
 
-    <!-- Modal Backdrop -->
-    <div class="modal-backdrop" onclick="this.parentElement.querySelector('.modal.active').classList.remove('active')"></div>
-
-    <!-- Scripts -->
-    <script src="js/api-client.js"></script>
-    <script src="js/dashboard.js"></script>
+    <div class="iframe-container" id="iframeContainer">
+        <iframe id="dashboardFrame" src="https://stanshare.onrender.com/dashboard" allowfullscreen></iframe>
+    </div>
 
     <script>
-        // Add settings modal functionality
-        function saveAPISettings() {
-            const apiEndpoint = document.getElementById('apiEndpoint').value;
-            localStorage.setItem('apiUrl', apiEndpoint);
-            alert('API settings saved successfully!');
-        }
+        // Try to load the iframe
+        const iframe = document.getElementById('dashboardFrame');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const iframeContainer = document.getElementById('iframeContainer');
 
-        // Load settings into modal when opened
-        window.addEventListener('load', () => {
-            document.getElementById('settingsEmail').value = localStorage.getItem('userEmail') || 'user@example.com';
-            document.getElementById('settingsType').value = localStorage.getItem('isGuest') === 'true' ? 'Guest' : 'Registered User';
-            document.getElementById('apiEndpoint').value = localStorage.getItem('apiUrl') || 'http://localhost:8080';
-        });
+        // Listen for iframe load success
+        iframe.onload = function() {
+            loadingContainer.style.display = 'none';
+            iframeContainer.style.display = 'block';
+        };
+
+        // Redirect to the new Render deployment if iframe fails
+        iframe.onerror = function() {
+            window.location.href = 'https://stanshare.onrender.com/dashboard';
+        };
+
+        // Fallback: Redirect after 5 seconds
+        setTimeout(function() {
+            if (iframeContainer.style.display === 'none') {
+                window.location.href = 'https://stanshare.onrender.com/dashboard';
+            }
+        }, 5000);
     </script>
 </body>
 </html>
